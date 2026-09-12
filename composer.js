@@ -193,3 +193,86 @@
 
   renderStructuredComposer();
 })();
+
+/* App-style empty profile fallbacks for KakaoTalk / WeChat */
+(() => {
+  const style = document.createElement('style');
+  style.textContent = `
+    .app-default-avatar{position:relative!important;display:grid!important;place-items:center!important;overflow:hidden!important;color:transparent!important;font-size:0!important;background:#d9dde2!important}
+    .app-default-avatar::before{content:"";position:absolute;width:35%;height:35%;left:32.5%;top:17%;border-radius:50%;background:#a9afb6}
+    .app-default-avatar::after{content:"";position:absolute;width:70%;height:46%;left:15%;bottom:-8%;border-radius:50% 50% 20% 20%;background:#a9afb6}
+    .app-default-avatar.kakao-empty{background:#dfe3e7!important;border-radius:13px!important}
+    .app-default-avatar.kakao-empty::before,.app-default-avatar.kakao-empty::after{background:#abb2b9}
+    .app-default-avatar.wechat-empty{background:#d5d5d5!important;border-radius:4px!important}
+    .app-default-avatar.wechat-empty::before,.app-default-avatar.wechat-empty::after{background:#a5a5a5}
+    .avatar-editor.app-default-avatar{width:46px!important;height:46px!important}
+    .header-profile.app-default-avatar{width:31px!important;height:31px!important;border-radius:50%!important}
+  `;
+  document.head.appendChild(style);
+
+  function usesPersonFallback() {
+    return state.platform === 'kakao' || state.platform === 'wechat';
+  }
+
+  function fallbackClass() {
+    return state.platform === 'wechat' ? 'wechat-empty' : 'kakao-empty';
+  }
+
+  const originalMakeAvatar = makeAvatar;
+  makeAvatar = function appDefaultMakeAvatar(speaker) {
+    if (!state.avatars[speaker] && usesPersonFallback()) {
+      const d = document.createElement('div');
+      d.className = `msg-avatar app-default-avatar ${fallbackClass()}`;
+      d.setAttribute('aria-label', '기본 프로필');
+      return d;
+    }
+    return originalMakeAvatar(speaker);
+  };
+
+  const originalRestoreAvatarUi = restoreAvatarUi;
+  restoreAvatarUi = function appDefaultRestoreAvatarUi(speaker) {
+    const img = $(speaker === 'A' ? 'avatarAImg' : 'avatarBImg');
+    const fallback = $(speaker === 'A' ? 'avatarAFallback' : 'avatarBFallback');
+    if (state.avatars[speaker] || !usesPersonFallback()) {
+      fallback.classList.remove('app-default-avatar', 'kakao-empty', 'wechat-empty');
+      return originalRestoreAvatarUi(speaker);
+    }
+    img.style.display = 'none';
+    fallback.textContent = '';
+    fallback.style.display = 'grid';
+    fallback.classList.remove('kakao-empty', 'wechat-empty');
+    fallback.classList.add('app-default-avatar', fallbackClass());
+  };
+
+  const originalRenderHeaderAvatar = renderHeaderAvatar;
+  renderHeaderAvatar = function appDefaultRenderHeaderAvatar() {
+    if (!state.avatars.B && usesPersonFallback()) {
+      els.headerAvatar.style.display = 'none';
+      els.headerAvatarFallback.textContent = '';
+      els.headerAvatarFallback.style.display = 'grid';
+      els.headerProfile.classList.remove('kakao-empty', 'wechat-empty');
+      els.headerProfile.classList.add('app-default-avatar', fallbackClass());
+      return;
+    }
+    els.headerProfile.classList.remove('app-default-avatar', 'kakao-empty', 'wechat-empty');
+    originalRenderHeaderAvatar();
+  };
+
+  function refreshParticipantFallbacks() {
+    restoreAvatarUi('A');
+    restoreAvatarUi('B');
+  }
+
+  const previousRenderAll = renderAll;
+  renderAll = function profileAwareRenderAll() {
+    previousRenderAll();
+    refreshParticipantFallbacks();
+  };
+
+  if (els.platformPicker) {
+    els.platformPicker.addEventListener('click', () => requestAnimationFrame(refreshParticipantFallbacks));
+  }
+
+  refreshParticipantFallbacks();
+  renderPreview();
+})();
