@@ -2,8 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0a1020" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="description" content="KakaoTalk, WeChat, WhatsApp, Telegram 스타일 채팅 목업 제작기" />
   <title>Chat Capture Maker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,6 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="composer.css" />
+  <link rel="stylesheet" href="mobile.css" />
 </head>
 <body>
   <header class="app-header">
@@ -167,6 +170,11 @@ B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 
     </section>
   </main>
 
+  <nav class="mobile-tabbar" aria-label="모바일 화면 전환">
+    <button type="button" class="mobile-tab active" id="mobileEditTab" role="tab" aria-selected="true">작성<span>대화 입력 · AI</span></button>
+    <button type="button" class="mobile-tab" id="mobilePreviewTab" role="tab" aria-selected="false">미리보기<span>채팅 화면 · 저장</span></button>
+  </nav>
+
   <dialog id="apiDialog">
     <form method="dialog" class="dialog-card" id="apiForm">
       <div class="panel-title-row compact">
@@ -190,5 +198,6 @@ B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="app.js"></script>
   <script src="composer.js"></script>
+  <script src="mobile.js"></script>
 </body>
 </html>
