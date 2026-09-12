@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111827" />
+  <title>Chat Capture Maker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">CHAT CAPTURE MAKER</p>
+      <h1>채팅 캡처 이미지 제작기</h1>
+      <p class="subcopy">카카오톡 · WeChat · WhatsApp · Telegram 스타일의 대화를 만들고 번역 후 PNG로 저장합니다.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn ghost" id="saveDraftBtn">임시 저장</button>
+      <button class="btn ghost" id="loadDraftBtn">불러오기</button>
+      <button class="btn primary" id="captureFullBtn">전체 대화 PNG</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="panel controls-panel">
+      <div class="panel-title-row">
+        <div>
+          <p class="step-label">STEP 1</p>
+          <h2>대화 설정</h2>
+        </div>
+        <button class="icon-btn" id="resetBtn" title="초기화">↻</button>
+      </div>
+
+      <label class="field-label">플랫폼</label>
+      <div class="platform-grid" id="platformPicker">
+        <button class="platform-card active" data-platform="kakao"><span class="platform-dot kakao-dot"></span><b>KakaoTalk</b><small>카카오톡</small></button>
+        <button class="platform-card" data-platform="wechat"><span class="platform-dot wechat-dot"></span><b>WeChat</b><small>위챗</small></button>
+        <button class="platform-card" data-platform="whatsapp"><span class="platform-dot whatsapp-dot"></span><b>WhatsApp</b><small>왓츠앱</small></button>
+        <button class="platform-card" data-platform="telegram"><span class="platform-dot telegram-dot"></span><b>Telegram</b><small>텔레그램</small></button>
+      </div>
+
+      <div class="form-grid two-col">
+        <label>대화방 이름<input id="chatTitle" type="text" value="Tommy" /></label>
+        <label>대화 날짜<input id="chatDate" type="date" /></label>
+        <label>시작 시간<input id="startTime" type="time" /></label>
+        <label>대화 톤
+          <select id="toneSelect">
+            <option value="natural-business">자연스러운 업무 채팅</option>
+            <option value="casual">캐주얼</option>
+            <option value="faithful">원문 충실</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="participant-grid">
+        <div class="participant-card">
+          <div class="avatar-editor"><img id="avatarAImg" alt="A 프로필" /><span id="avatarAFallback">A</span></div>
+          <div class="participant-fields">
+            <label>나 (A)<input id="nameA" type="text" value="lamjskim" /></label>
+            <label class="file-label">프로필 사진<input id="avatarA" type="file" accept="image/*" /></label>
+          </div>
+        </div>
+        <div class="participant-card">
+          <div class="avatar-editor"><img id="avatarBImg" alt="B 프로필" /><span id="avatarBFallback">T</span></div>
+          <div class="participant-fields">
+            <label>상대방 (B)<input id="nameB" type="text" value="Tommy" /></label>
+            <label class="file-label">프로필 사진<input id="avatarB" type="file" accept="image/*" /></label>
+          </div>
+        </div>
+      </div>
+
+      <label>전문용어/상황 힌트 <span class="muted">(선택)</span>
+        <input id="contextHint" type="text" placeholder="예: petrochemical trading, SM spot market" />
+      </label>
+
+      <div class="divider"></div>
+
+      <div class="panel-title-row compact">
+        <div><p class="step-label">STEP 2</p><h2>대화 입력</h2></div>
+        <span class="hint-chip">A: / B: 형식</span>
+      </div>
+      <textarea id="rawConversation" rows="11" spellcheck="false">A: 오늘 SM 시장 어때?
+B: 중국 내수에서 prompt short covering이 계속 나오고 있고, LG Chem도 10월 도착분을 보는 것 같아.
+A: LG도 드디어 들어오네. 금호는 구매 끝난 줄 알았는데.
+B: 그런 것 같아. 한국과 일본 쪽 물량이 거의 말라서 필요하면 중국밖에 없을 듯.
+A: 10월 중국 물량은 대략 얼마 정도야?
+B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 필요할 것 같아.</textarea>
+      <div class="inline-actions">
+        <button class="btn secondary" id="parseBtn">대화 적용</button>
+        <button class="btn ghost" id="addMessageBtn">+ 메시지 추가</button>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="panel-title-row compact">
+        <div><p class="step-label">STEP 3</p><h2>AI 번역 · 자연화</h2></div>
+        <button class="text-btn" id="apiSettingsBtn">API 설정</button>
+      </div>
+      <div class="ai-actions">
+        <button class="btn ai" data-ai="naturalize">✨ 자연스럽게</button>
+        <button class="btn ai" data-lang="en">EN 영어</button>
+        <button class="btn ai" data-lang="ja">日本語</button>
+        <button class="btn ai" data-lang="ko">한국어 원문</button>
+      </div>
+      <p id="apiStatus" class="status-line">OpenAI 번역을 사용하려면 Google Apps Script Web App URL을 설정하세요.</p>
+
+      <div class="divider"></div>
+      <div class="panel-title-row compact"><div><p class="step-label">STEP 4</p><h2>메시지 편집</h2></div><span id="messageCount" class="hint-chip">0개</span></div>
+      <div id="messageEditor" class="message-editor"></div>
+    </section>
+
+    <section class="preview-column">
+      <div class="preview-toolbar">
+        <div>
+          <p class="step-label">LIVE PREVIEW</p>
+          <h2>채팅 화면</h2>
+        </div>
+        <div class="preview-actions">
+          <label class="switch-label"><input type="checkbox" id="mockupToggle" checked><span>Mockup 표시</span></label>
+          <button class="btn ghost" id="captureScreenBtn">현재 화면 PNG</button>
+        </div>
+      </div>
+
+      <div class="phone-wrap">
+        <div class="phone platform-kakao" id="captureTarget">
+          <div class="phone-statusbar">
+            <span id="statusTime">12:34</span>
+            <span class="status-icons">● ● ▰</span>
+          </div>
+          <div class="chat-header" id="chatHeader">
+            <span class="back-icon">‹</span>
+            <div class="header-center"><strong id="previewTitle">Tommy</strong><small id="platformLabel">KakaoTalk</small></div>
+            <span class="header-more">☰</span>
+          </div>
+          <div class="chat-scroll" id="chatScroll">
+            <div class="date-separator" id="dateSeparator"></div>
+            <div id="messageList"></div>
+            <div class="mockup-mark" id="mockupMark">MOCKUP</div>
+          </div>
+          <div class="composer-bar">
+            <span>＋</span><div class="fake-input">메시지 입력</div><span>☺</span>
+          </div>
+        </div>
+      </div>
+      <p class="preview-note">시간은 시작 시간을 기준으로 자동 배치됩니다. 날짜는 대화 시작 지점에 한 번만 표시됩니다.</p>
+    </section>
+  </main>
+
+  <dialog id="apiDialog">
+    <form method="dialog" class="dialog-card">
+      <div class="panel-title-row compact"><div><p class="step-label">API CONNECTION</p><h2>Google Apps Script 설정</h2></div><button class="icon-btn" value="cancel">×</button></div>
+      <p class="dialog-copy">OpenAI API Key는 GitHub에 저장하지 않고 Apps Script의 Script Properties에 보관합니다. 배포한 Web App URL만 브라우저에 저장됩니다.</p>
+      <label>Apps Script Web App URL<input id="gasUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" /></label>
+      <div class="dialog-actions"><button class="btn ghost" value="cancel">취소</button><button class="btn primary" type="button" id="saveApiBtn">URL 저장</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
