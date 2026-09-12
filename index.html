@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="composer.css" />
 </head>
 <body>
   <header class="app-header">
@@ -83,19 +84,38 @@
       <div class="divider"></div>
 
       <div class="panel-title-row compact">
-        <div><p class="step-label">STEP 2</p><h2>대화 입력</h2></div>
-        <span class="hint-chip">A: / B: 형식</span>
+        <div><p class="step-label">STEP 2</p><h2>대화 작성</h2></div>
+        <span class="hint-chip">화자 버튼으로 선택</span>
       </div>
-      <textarea id="rawConversation" rows="11" spellcheck="false">A: 오늘 SM 시장 어때?
+      <p class="composer-help">A: / B:를 직접 입력할 필요 없이 메시지별로 <b>나</b> 또는 <b>상대</b>를 선택하세요. 메시지는 입력 즉시 오른쪽 채팅 화면에 반영됩니다.</p>
+
+      <div class="speaker-add-row">
+        <button class="speaker-add-btn mine" id="addMineMessageBtn" type="button">+ 내 메시지</button>
+        <button class="speaker-add-btn theirs" id="addTheirsMessageBtn" type="button">+ 상대 메시지</button>
+        <button class="speaker-add-btn next" id="addNextMessageBtn" type="button">+ 다음 화자 자동</button>
+      </div>
+      <div id="structuredMessageList" class="structured-message-list"></div>
+      <p class="input-shortcut">팁: 메시지 입력 중 Ctrl+Enter(맥은 ⌘+Enter)를 누르면 반대 화자의 다음 메시지 칸이 바로 추가됩니다.</p>
+
+      <details class="bulk-import">
+        <summary>여러 대화를 한 번에 붙여넣기 <span class="legacy-hint">(A: / B: 형식)</span></summary>
+        <textarea id="rawConversation" rows="9" spellcheck="false">A: 오늘 SM 시장 어때?
 B: 중국 내수에서 prompt short covering이 계속 나오고 있고, LG Chem도 10월 도착분을 보는 것 같아.
 A: LG도 드디어 들어오네. 금호는 구매 끝난 줄 알았는데.
 B: 그런 것 같아. 한국과 일본 쪽 물량이 거의 말라서 필요하면 중국밖에 없을 듯.
 A: 10월 중국 물량은 대략 얼마 정도야?
 B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 필요할 것 같아.</textarea>
-      <div class="inline-actions">
-        <button class="btn secondary" id="parseBtn">대화 적용</button>
-        <button class="btn ghost" id="addMessageBtn">+ 메시지 추가</button>
-      </div>
+        <div class="inline-actions">
+          <button class="btn secondary" id="parseBtn" type="button">일괄 대화 적용</button>
+        </div>
+      </details>
+      <button id="addMessageBtn" type="button" hidden aria-hidden="true"></button>
+
+      <details class="advanced-editor">
+        <summary>정밀 편집 보기 <span class="legacy-hint">시간 확인 · 빠른 화자 전환</span></summary>
+        <div class="panel-title-row compact" style="margin-top:12px"><div><p class="step-label">ADVANCED</p><h2>메시지 정밀 편집</h2></div><span id="messageCount" class="hint-chip">0개</span></div>
+        <div id="messageEditor" class="message-editor"></div>
+      </details>
 
       <div class="divider"></div>
 
@@ -111,10 +131,6 @@ B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 
         <button class="btn ai" data-lang="ko">한국어 원문</button>
       </div>
       <p id="apiStatus" class="status-line">AI 기능은 Google Apps Script 연결 후 사용할 수 있습니다.</p>
-
-      <div class="divider"></div>
-      <div class="panel-title-row compact"><div><p class="step-label">STEP 4</p><h2>메시지 편집</h2></div><span id="messageCount" class="hint-chip">0개</span></div>
-      <div id="messageEditor" class="message-editor"></div>
     </section>
 
     <section class="preview-column">
@@ -173,5 +189,6 @@ B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="app.js"></script>
+  <script src="composer.js"></script>
 </body>
 </html>
