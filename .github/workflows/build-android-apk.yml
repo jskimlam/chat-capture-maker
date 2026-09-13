@@ -34,6 +34,12 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Restore stable debug signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: chat-capture-maker-debug-keystore-v1
+
       - name: Install Android platform
         run: yes | sdkmanager 'platforms;android-35' 'build-tools;35.0.0' >/dev/null
 
