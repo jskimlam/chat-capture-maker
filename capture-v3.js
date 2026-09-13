@@ -69,7 +69,7 @@
     clone.classList.add('capture-export', full ? 'capture-full' : 'capture-screen');
     stripIds(clone);
 
-    /* MOCKUP is a preview-only safety marker. It must never appear in a saved PNG. */
+    /* MOCKUP is preview-only. Saved images must never contain it. */
     clone.querySelectorAll('.mockup-mark').forEach(mark => mark.remove());
 
     clone.style.setProperty('width', `${Math.ceil(sourceRect.width)}px`, 'important');
@@ -181,4 +181,8 @@
       stage.remove();
     }
   };
+
+  /* Start clean: the marker is off by default in the editor as well. */
+  if (els.mockupToggle) els.mockupToggle.checked = false;
+  if (els.mockupMark) els.mockupMark.style.display = 'none';
 })();
