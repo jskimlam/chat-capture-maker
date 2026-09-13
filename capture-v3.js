@@ -1,4 +1,5 @@
 (() => {
+  const DATE_KEY = 'chatCaptureShowDateV1';
   const nextFrame = () => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
   async function waitForFonts() {
@@ -29,6 +30,72 @@
   function stripIds(root) {
     root.removeAttribute('id');
     root.querySelectorAll('[id]').forEach(node => node.removeAttribute('id'));
+  }
+
+  function injectFinalPolishStyles() {
+    if (document.getElementById('ccmFinalPolishStyles')) return;
+    const style = document.createElement('style');
+    style.id = 'ccmFinalPolishStyles';
+    style.textContent = `
+      /* Final spacing pass: closer to native messaging-app rhythm. */
+      #captureTarget .message-row{margin:0 0 7px!important}
+      #captureTarget .message-row + .message-row{margin-top:3px!important}
+      #captureTarget .message-row.mine + .message-row.theirs,
+      #captureTarget .message-row.theirs + .message-row.mine{margin-top:10px!important}
+      #captureTarget .sender-name{margin-bottom:6px!important}
+      #captureTarget .bubble{padding:9px 13px 11px!important;line-height:1.42!important}
+      #captureTarget .bubble-text{display:block;transform:translateY(-1px)}
+      #captureTarget.platform-kakao .bubble{padding:9px 14px 11px!important}
+      #captureTarget.platform-wechat .bubble{padding:9px 13px 10px!important}
+      #captureTarget.platform-whatsapp .bubble,
+      #captureTarget.platform-telegram .bubble{padding:9px 13px 10px!important}
+      #captureTarget .outside-meta{margin-bottom:2px!important}
+      #captureTarget .date-separator{transition:none}
+
+      /* The export clone lives outside #captureTarget, so mirror the same layout. */
+      .capture-export .message-row{margin:0 0 7px!important}
+      .capture-export .message-row + .message-row{margin-top:3px!important}
+      .capture-export .message-row.mine + .message-row.theirs,
+      .capture-export .message-row.theirs + .message-row.mine{margin-top:10px!important}
+      .capture-export .sender-name{margin-bottom:6px!important}
+      .capture-export .bubble{padding:9px 13px 11px!important;line-height:1.42!important}
+      .capture-export .bubble-text{display:block;transform:translateY(-1px)}
+      .capture-export.platform-kakao .bubble{padding:9px 14px 11px!important}
+      .capture-export.platform-wechat .bubble{padding:9px 13px 10px!important}
+      .capture-export.platform-whatsapp .bubble,
+      .capture-export.platform-telegram .bubble{padding:9px 13px 10px!important}
+      .capture-export .outside-meta{margin-bottom:2px!important}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function applyDateVisibility() {
+    const separator = els.captureTarget?.querySelector('.date-separator');
+    const toggle = document.getElementById('dateSeparatorToggle');
+    const visible = toggle ? toggle.checked : localStorage.getItem(DATE_KEY) !== '0';
+    if (separator) separator.style.display = visible ? '' : 'none';
+  }
+
+  function setupDateToggle() {
+    if (document.getElementById('dateSeparatorToggle')) {
+      applyDateVisibility();
+      return;
+    }
+    const row = document.querySelector('.option-row');
+    if (!row) return;
+
+    const label = document.createElement('label');
+    label.className = 'check-option';
+    const checked = localStorage.getItem(DATE_KEY) !== '0';
+    label.innerHTML = `<input type="checkbox" id="dateSeparatorToggle" ${checked ? 'checked' : ''}><span>날짜 표시</span>`;
+    row.appendChild(label);
+
+    const input = label.querySelector('input');
+    input.addEventListener('change', () => {
+      localStorage.setItem(DATE_KEY, input.checked ? '1' : '0');
+      applyDateVisibility();
+    });
+    applyDateVisibility();
   }
 
   function fitHeaderTitle(root) {
@@ -69,8 +136,12 @@
     clone.classList.add('capture-export', full ? 'capture-full' : 'capture-screen');
     stripIds(clone);
 
-    /* MOCKUP is preview-only. Saved images must never contain it. */
+    /* Saved images are clean chat screenshots, not phone mockups. */
+    clone.querySelector('.phone-statusbar')?.remove();
     clone.querySelectorAll('.mockup-mark').forEach(mark => mark.remove());
+    clone.style.setProperty('border', '0', 'important');
+    clone.style.setProperty('border-radius', '0', 'important');
+    clone.style.setProperty('box-shadow', 'none', 'important');
 
     clone.style.setProperty('width', `${Math.ceil(sourceRect.width)}px`, 'important');
     clone.style.setProperty('max-width', 'none', 'important');
@@ -82,9 +153,11 @@
       clone.style.setProperty('min-height', '0', 'important');
       clone.style.setProperty('max-height', 'none', 'important');
     } else {
-      clone.style.setProperty('height', `${Math.ceil(sourceRect.height)}px`, 'important');
-      clone.style.setProperty('min-height', `${Math.ceil(sourceRect.height)}px`, 'important');
-      clone.style.setProperty('max-height', `${Math.ceil(sourceRect.height)}px`, 'important');
+      const statusHeight = source.querySelector('.phone-statusbar')?.getBoundingClientRect().height || 0;
+      const exportHeight = Math.max(1, Math.ceil(sourceRect.height - statusHeight));
+      clone.style.setProperty('height', `${exportHeight}px`, 'important');
+      clone.style.setProperty('min-height', `${exportHeight}px`, 'important');
+      clone.style.setProperty('max-height', `${exportHeight}px`, 'important');
     }
 
     const stage = document.createElement('div');
@@ -128,6 +201,7 @@
   createCaptureCanvas = async function(full) {
     if (typeof html2canvas === 'undefined') throw new Error('캡처 라이브러리를 불러오지 못했습니다.');
 
+    applyDateVisibility();
     await waitForFonts();
     const { stage, clone, cloneScroll } = buildCaptureClone(Boolean(full));
 
@@ -182,7 +256,10 @@
     }
   };
 
-  /* Start clean: the marker is off by default in the editor as well. */
+  injectFinalPolishStyles();
+  setupDateToggle();
+
+  /* MOCKUP is strictly a preview aid and starts disabled. */
   if (els.mockupToggle) els.mockupToggle.checked = false;
   if (els.mockupMark) els.mockupMark.style.display = 'none';
 })();
