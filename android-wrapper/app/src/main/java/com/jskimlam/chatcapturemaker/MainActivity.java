@@ -24,7 +24,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 public class MainActivity extends Activity {
-    private static final String APP_URL = "https://jskimlam.github.io/chat-capture-maker/";
+    private static final String APP_URL = "https://jskimlam.github.io/chat-capture-maker/?android=1.1";
     private static final int FILE_CHOOSER_REQUEST = 1001;
 
     private WebView webView;
@@ -49,9 +49,11 @@ public class MainActivity extends Activity {
         settings.setAllowContentAccess(true);
         settings.setLoadWithOverviewMode(false);
         settings.setUseWideViewPort(true);
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         }
+        webView.clearCache(true);
 
         webView.addJavascriptInterface(new AndroidBridge(), "AndroidBridge");
 
