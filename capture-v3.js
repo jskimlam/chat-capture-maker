@@ -52,7 +52,7 @@
 
   function chooseScale(width, height, full) {
     const preferred = full ? 2 : Math.min(2, Math.max(1.5, window.devicePixelRatio || 1));
-    const maxOutputWidth = full ? 8192 : 8192;
+    const maxOutputWidth = 8192;
     const maxOutputHeight = full ? 16384 : 8192;
     const maxPixels = full ? 24000000 : 18000000;
     const byWidth = maxOutputWidth / Math.max(1, width);
@@ -68,6 +68,9 @@
     const clone = source.cloneNode(true);
     clone.classList.add('capture-export', full ? 'capture-full' : 'capture-screen');
     stripIds(clone);
+
+    /* MOCKUP is a preview-only safety marker. It must never appear in a saved PNG. */
+    clone.querySelectorAll('.mockup-mark').forEach(mark => mark.remove());
 
     clone.style.setProperty('width', `${Math.ceil(sourceRect.width)}px`, 'important');
     clone.style.setProperty('max-width', 'none', 'important');
@@ -111,9 +114,6 @@
     if (!cloneScroll) return;
     await nextFrame();
 
-    /* scrollHeight remains a reliable fallback even if a mobile !important
-       height rule tries to constrain the flex child. Explicitly pin the
-       content box to the entire rendered conversation before capture. */
     const required = Math.max(
       cloneScroll.scrollHeight,
       cloneScroll.getBoundingClientRect().height,
