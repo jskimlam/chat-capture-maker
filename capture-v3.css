@@ -1,0 +1,86 @@
+/* Capture v3: robust export layout + header text safety */
+
+/* Give bold CJK/Korean glyphs enough vertical room even when html2canvas uses
+   slightly different font metrics from Android WebView. */
+.ccm-header-main{
+  overflow:visible!important;
+  padding:1px 0;
+}
+.ccm-header-title{
+  line-height:1.38!important;
+  padding:3px 0 4px!important;
+  margin:-3px 0 -4px!important;
+  min-height:calc(1.38em + 7px);
+  box-sizing:content-box!important;
+}
+.ccm-header-subtitle{
+  line-height:1.35!important;
+  padding:1px 0 2px!important;
+}
+
+/* Export nodes are detached copies. These rules deliberately beat the
+   mobile .phone height !important rule so a full export can grow to the
+   real conversation height. */
+body .phone.capture-export{
+  max-height:none!important;
+  transform:none!important;
+  contain:none!important;
+  overflow:hidden!important;
+  flex:none!important;
+}
+body .phone.capture-export.capture-full{
+  height:auto!important;
+  min-height:0!important;
+}
+body .phone.capture-export.capture-full .chat-scroll{
+  flex:0 0 auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+  overscroll-behavior:none!important;
+}
+body .phone.capture-export.capture-full .message-list,
+body .phone.capture-export.capture-full .message-row,
+body .phone.capture-export.capture-full .message-stack,
+body .phone.capture-export.capture-full .bubble-line{
+  overflow:visible!important;
+  max-height:none!important;
+}
+body .phone.capture-export .phone-statusbar,
+body .phone.capture-export .chat-header,
+body .phone.capture-export .composer-bar{
+  flex:0 0 auto!important;
+  overflow:visible!important;
+}
+body .phone.capture-export .ccm-header-main{
+  overflow:visible!important;
+}
+body .phone.capture-export .ccm-header-title{
+  overflow:visible!important;
+  text-overflow:clip!important;
+  white-space:nowrap!important;
+  padding:5px 0 6px!important;
+  margin:-5px 0 -6px!important;
+  line-height:1.42!important;
+}
+body .phone.capture-export .ccm-header-subtitle{
+  overflow:visible!important;
+  padding:2px 0 3px!important;
+  line-height:1.4!important;
+}
+body .phone.capture-export .mockup-mark{
+  position:absolute!important;
+}
+
+/* The hidden export stage must not affect app layout. */
+#ccmCaptureStage{
+  position:absolute!important;
+  left:-100000px!important;
+  top:0!important;
+  width:auto!important;
+  height:auto!important;
+  overflow:visible!important;
+  pointer-events:none!important;
+  z-index:-2147483647!important;
+}
