@@ -102,8 +102,21 @@
       .capture-export .message-row + .message-row{margin-top:2px!important}
       .capture-export .message-row.mine + .message-row.theirs,
       .capture-export .message-row.theirs + .message-row.mine{margin-top:13px!important}
-      .capture-export .sender-name{margin-bottom:8px!important}
-      .capture-export .bubble{padding:10px 13px 11px!important;line-height:1.48!important}
+      .capture-export .sender-name{
+        font-size:11px!important;
+        font-weight:500!important;
+        line-height:1.35!important;
+        margin:0 0 8px 3px!important;
+        padding:0 0 2px!important;
+        letter-spacing:-.01em!important;
+      }
+      .capture-export .bubble-line{gap:5px!important;align-items:flex-end!important}
+      .capture-export .bubble{
+        font-size:14.5px!important;
+        padding:10px 13px 11px!important;
+        line-height:1.48!important;
+        letter-spacing:-.015em!important;
+      }
       .capture-export .bubble-text{display:block;transform:translateY(-1px)}
       .capture-export.platform-kakao .bubble{padding:10px 14px 11px!important}
       .capture-export.platform-wechat .bubble{padding:10px 13px 10px!important}
@@ -321,6 +334,7 @@
   function buildCaptureClone(full) {
     const source = els.captureTarget;
     const sourceRect = source.getBoundingClientRect();
+    const exportWidth = 430;
     const clone = source.cloneNode(true);
     clone.classList.add('capture-export', full ? 'capture-full' : 'capture-screen');
     stripIds(clone);
@@ -335,7 +349,7 @@
     applyDateVisibility(clone);
     applyTimeVisibility(clone);
 
-    clone.style.setProperty('width', `${Math.ceil(sourceRect.width)}px`, 'important');
+    clone.style.setProperty('width', `${exportWidth}px`, 'important');
     clone.style.setProperty('max-width', 'none', 'important');
     clone.style.setProperty('transform', 'none', 'important');
     clone.style.setProperty('margin', '0', 'important');
@@ -354,7 +368,7 @@
 
     const stage = document.createElement('div');
     stage.id = 'ccmCaptureStage';
-    stage.style.width = `${Math.ceil(sourceRect.width)}px`;
+    stage.style.width = `${exportWidth}px`;
     stage.appendChild(clone);
     document.body.appendChild(stage);
 
@@ -433,8 +447,10 @@
         scrollY: 0,
         width,
         height,
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
+        /* Render exports against a desktop-sized virtual viewport so Android/mobile
+           media queries cannot collapse sender-name / bubble spacing. */
+        windowWidth: 1200,
+        windowHeight: Math.max(window.innerHeight, height + 200),
         imageTimeout: 4000,
         removeContainer: true
       });
