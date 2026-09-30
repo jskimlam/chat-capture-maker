@@ -339,3 +339,27 @@
   font-weight:400!important;
   letter-spacing:-.01em!important;
 }
+
+
+/* Platform-specific last-message to composer spacing */
+.phone.platform-kakao .chat-scroll{
+  padding-bottom:34px!important;
+}
+.phone.platform-kakao .message-list{
+  padding-bottom:4px;
+}
+.phone.platform-wechat .chat-scroll,
+.phone.platform-whatsapp .chat-scroll,
+.phone.platform-telegram .chat-scroll{
+  padding-bottom:10px!important;
+}
+.phone.platform-wechat .message-list,
+.phone.platform-whatsapp .message-list,
+.phone.platform-telegram .message-list{
+  padding-bottom:0!important;
+}
+
+/* In Kakao, a checked read-state means the yellow unread "1" disappears. */
+.phone.platform-kakao .kakao-unread{
+  line-height:1;
+}
