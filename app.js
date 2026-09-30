@@ -22,7 +22,8 @@ const els = {
   readReceiptToggle: $('readReceiptToggle'), apiDialog: $('apiDialog'), gasUrl: $('gasUrl'), appPassword: $('appPassword'),
   apiStatus: $('apiStatus'), connectionPill: $('connectionPill'), toast: $('toast'), headerAvatar: $('headerAvatar'),
   headerAvatarFallback: $('headerAvatarFallback'), headerProfile: $('headerProfile'),
-  speakerMapA: $('speakerMapA'), speakerMapB: $('speakerMapB'), bulkImportPanel: $('bulkImportPanel')
+  speakerMapA: $('speakerMapA'), speakerMapB: $('speakerMapB'), bulkImportPanel: $('bulkImportPanel'),
+  draftDialog: $('draftDialog'), draftList: $('draftList')
 };
 
 const platformNames = { kakao: 'KakaoTalk', wechat: 'WeChat', whatsapp: 'WhatsApp', telegram: 'Telegram' };
@@ -39,6 +40,7 @@ function initDefaults() {
   els.startTime.value = localTimeValue();
   els.gasUrl.value = localStorage.getItem('chatCaptureGasUrl') || '';
   validateStoredSession();
+  migrateLegacyDraft();
   parseConversation(false);
   bindEvents();
   renderAll();
@@ -73,6 +75,11 @@ function bindEvents() {
   $('resetBtn').addEventListener('click', resetApp);
   $('saveDraftBtn').addEventListener('click', saveDraft);
   $('loadDraftBtn').addEventListener('click', loadDraft);
+  $('closeDraftDialogBtn')?.addEventListener('click', closeDraftDialog);
+  $('closeDraftDialogBottomBtn')?.addEventListener('click', closeDraftDialog);
+  els.draftDialog?.addEventListener('click', (e) => {
+    if (e.target === els.draftDialog) closeDraftDialog();
+  });
   $('captureScreenBtn').addEventListener('click', () => downloadCapture(false));
   $('captureFullBtn').addEventListener('click', () => downloadCapture(true));
   $('apiSettingsBtn').addEventListener('click', openApiDialog);
@@ -664,8 +671,15 @@ function setAiBusy(on) {
   });
 }
 
-function saveDraft() {
-  const draft = {
+
+const DRAFT_INDEX_KEY = 'chatCaptureDraftIndexV2';
+const DRAFT_PREFIX = 'chatCaptureDraftV2:';
+const LEGACY_DRAFT_KEY = 'chatCaptureDraft';
+const LEGACY_MIGRATED_KEY = 'chatCaptureDraftLegacyMigratedV2';
+const MAX_DRAFTS = 20;
+
+function buildCurrentDraft() {
+  return {
     platform: state.platform,
     messages: state.messages,
     originals: state.originals,
@@ -684,29 +698,204 @@ function saveDraft() {
     mockup: els.mockupToggle.checked,
     readReceipt: els.readReceiptToggle.checked
   };
+}
 
+function getDraftIndex() {
   try {
-    localStorage.setItem('chatCaptureDraft', JSON.stringify(draft));
-    showToast('현재 작업을 이 브라우저에 저장했습니다.');
+    const parsed = JSON.parse(localStorage.getItem(DRAFT_INDEX_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed.filter((x) => x && x.id) : [];
   } catch {
-    showToast('저장 용량이 부족합니다. 프로필 이미지 크기를 줄여 주세요.');
+    return [];
   }
 }
 
+function setDraftIndex(items) {
+  localStorage.setItem(DRAFT_INDEX_KEY, JSON.stringify(items.slice(0, MAX_DRAFTS)));
+}
+
+function draftMetaFromPayload(id, draft, savedAt = Date.now()) {
+  const fields = draft?.fields || {};
+  const title = String(fields.chatTitle || fields.nameB || '새 대화').trim() || '새 대화';
+  return {
+    id,
+    title,
+    peer: String(fields.nameB || '').trim(),
+    chatDate: fields.chatDate || '',
+    platform: draft?.platform || 'kakao',
+    messageCount: Array.isArray(draft?.messages) ? draft.messages.length : 0,
+    savedAt: Number(savedAt) || Date.now()
+  };
+}
+
+function migrateLegacyDraft() {
+  if (localStorage.getItem(LEGACY_MIGRATED_KEY) === '1') return;
+  const raw = localStorage.getItem(LEGACY_DRAFT_KEY);
+  if (!raw) {
+    localStorage.setItem(LEGACY_MIGRATED_KEY, '1');
+    return;
+  }
+
+  try {
+    const draft = JSON.parse(raw);
+    const id = 'legacy-' + Date.now();
+    const savedAt = Date.now();
+    localStorage.setItem(DRAFT_PREFIX + id, JSON.stringify(draft));
+    const index = getDraftIndex();
+    index.unshift(draftMetaFromPayload(id, draft, savedAt));
+    setDraftIndex(index);
+    localStorage.setItem(LEGACY_MIGRATED_KEY, '1');
+  } catch (err) {
+    console.warn('Legacy draft migration skipped:', err);
+  }
+}
+
+function saveDraft() {
+  const draft = buildCurrentDraft();
+  const id = String(Date.now());
+  const savedAt = Date.now();
+  let index = getDraftIndex();
+  let removed = 0;
+
+  const tryWrite = () => {
+    localStorage.setItem(DRAFT_PREFIX + id, JSON.stringify(draft));
+    const next = [draftMetaFromPayload(id, draft, savedAt), ...index.filter((x) => x.id !== id)];
+    const overflow = next.slice(MAX_DRAFTS);
+    setDraftIndex(next);
+    overflow.forEach((item) => localStorage.removeItem(DRAFT_PREFIX + item.id));
+  };
+
+  while (true) {
+    try {
+      tryWrite();
+      break;
+    } catch (err) {
+      const oldest = index.pop();
+      if (!oldest) {
+        localStorage.removeItem(DRAFT_PREFIX + id);
+        showToast('저장 공간이 부족합니다. 프로필 이미지를 줄이거나 오래된 저장본을 삭제해 주세요.');
+        return;
+      }
+      localStorage.removeItem(DRAFT_PREFIX + oldest.id);
+      removed += 1;
+    }
+  }
+
+  const title = draft.fields.chatTitle || draft.fields.nameB || '새 대화';
+  showToast(removed
+    ? '"' + title + '" 저장 완료 · 공간 확보를 위해 오래된 ' + removed + '개 삭제'
+    : '"' + title + '" 저장 완료 · 불러오기에서 선택할 수 있습니다.');
+}
+
+function formatDraftSavedAt(timestamp) {
+  const d = new Date(Number(timestamp) || Date.now());
+  return pad(d.getMonth() + 1) + '/' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function renderDraftList() {
+  if (!els.draftList) return;
+  const index = getDraftIndex().sort((a, b) => Number(b.savedAt || 0) - Number(a.savedAt || 0));
+  els.draftList.innerHTML = '';
+
+  if (!index.length) {
+    const empty = document.createElement('div');
+    empty.className = 'draft-empty';
+    empty.innerHTML = '<b>저장된 대화가 없습니다.</b><span>상단의 임시 저장을 누르면 이 목록에 저장됩니다.</span>';
+    els.draftList.append(empty);
+    return;
+  }
+
+  index.forEach((item) => {
+    const row = document.createElement('article');
+    row.className = 'draft-item';
+    row.dataset.draftId = item.id;
+
+    const main = document.createElement('button');
+    main.type = 'button';
+    main.className = 'draft-item-main';
+    main.setAttribute('aria-label', (item.title || '저장 대화') + ' 불러오기');
+
+    const title = document.createElement('strong');
+    title.className = 'draft-item-title';
+    title.textContent = item.title || '새 대화';
+
+    const meta = document.createElement('span');
+    meta.className = 'draft-item-meta';
+    const parts = [
+      platformNames[item.platform] || item.platform || 'Chat',
+      item.chatDate || '',
+      (Number(item.messageCount) || 0) + '개 메시지',
+      '저장 ' + formatDraftSavedAt(item.savedAt)
+    ].filter(Boolean);
+    meta.textContent = parts.join(' · ');
+
+    const preview = document.createElement('span');
+    preview.className = 'draft-item-peer';
+    preview.textContent = item.peer ? '상대: ' + item.peer : '저장된 대화';
+
+    main.append(title, meta, preview);
+    main.addEventListener('click', () => restoreDraftById(item.id));
+
+    const actions = document.createElement('div');
+    actions.className = 'draft-item-actions';
+
+    const open = document.createElement('button');
+    open.type = 'button';
+    open.className = 'btn secondary draft-open-btn';
+    open.textContent = '불러오기';
+    open.addEventListener('click', () => restoreDraftById(item.id));
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'btn ghost draft-delete-btn';
+    del.textContent = '삭제';
+    del.addEventListener('click', () => deleteDraft(item.id));
+
+    actions.append(open, del);
+    row.append(main, actions);
+    els.draftList.append(row);
+  });
+}
+
 function loadDraft() {
-  const raw = localStorage.getItem('chatCaptureDraft');
-  if (!raw) return showToast('저장된 작업이 없습니다.');
+  migrateLegacyDraft();
+  renderDraftList();
+
+  if (!getDraftIndex().length) {
+    showToast('저장된 작업이 없습니다.');
+    return;
+  }
+
+  if (els.draftDialog && !els.draftDialog.open) els.draftDialog.showModal();
+}
+
+function closeDraftDialog() {
+  if (els.draftDialog?.open) els.draftDialog.close();
+}
+
+function restoreDraftById(id) {
+  const raw = localStorage.getItem(DRAFT_PREFIX + id);
+  if (!raw) {
+    const index = getDraftIndex().filter((x) => x.id !== id);
+    setDraftIndex(index);
+    renderDraftList();
+    showToast('저장 데이터가 없어 목록에서 정리했습니다.');
+    return;
+  }
 
   try {
     const d = JSON.parse(raw);
     Object.assign(state, {
       platform: d.platform || 'kakao',
-      messages: d.messages || [],
-      originals: d.originals || [],
+      messages: Array.isArray(d.messages) ? d.messages : [],
+      originals: Array.isArray(d.originals) ? d.originals : [],
       avatars: d.avatars || { A: '', B: '' },
       currentLang: d.currentLang || 'ko'
     });
-    Object.entries(d.fields || {}).forEach(([k, v]) => { if ($(k)) $(k).value = v; });
+
+    Object.entries(d.fields || {}).forEach(([k, v]) => {
+      if ($(k)) $(k).value = v;
+    });
+
     els.mockupToggle.checked = d.mockup !== false;
     els.readReceiptToggle.checked = d.readReceipt !== false;
     qsa('.platform-card').forEach((x) => x.classList.toggle('active', x.dataset.platform === state.platform));
@@ -714,10 +903,25 @@ function loadDraft() {
     restoreAvatarUi('B');
     regenerateTimes();
     renderAll();
-    showToast('저장된 작업을 불러왔습니다.');
-  } catch {
+    closeDraftDialog();
+    showToast('"' + (els.chatTitle.value || els.nameB.value || '저장 대화') + '"을 불러왔습니다.');
+  } catch (err) {
+    console.error(err);
     showToast('저장 데이터를 불러오지 못했습니다.');
   }
+}
+
+function deleteDraft(id) {
+  const item = getDraftIndex().find((x) => x.id === id);
+  const label = item?.title || '이 저장본';
+  if (!confirm('"' + label + '"을 저장 목록에서 삭제할까요?')) return;
+
+  localStorage.removeItem(DRAFT_PREFIX + id);
+  setDraftIndex(getDraftIndex().filter((x) => x.id !== id));
+  renderDraftList();
+
+  if (!getDraftIndex().length) closeDraftDialog();
+  showToast('저장본을 삭제했습니다.');
 }
 
 function restoreAvatarUi(s) {
