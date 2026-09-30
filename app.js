@@ -90,6 +90,7 @@ function bindEvents() {
   els.capturePreviewDialog?.addEventListener('click', (e) => {
     if (e.target === els.capturePreviewDialog) closeCapturePreview();
   });
+  els.capturePreviewDialog?.addEventListener('close', cleanupCapturePreview);
   $('apiSettingsBtn').addEventListener('click', openApiDialog);
   $('connectApiBtn').addEventListener('click', connectApi);
   $('disconnectApiBtn').addEventListener('click', disconnectApi);
@@ -1044,14 +1045,18 @@ async function openCapturePreview(canvas) {
   }
 }
 
-function closeCapturePreview() {
-  if (els.capturePreviewDialog?.open) els.capturePreviewDialog.close();
+function cleanupCapturePreview() {
   if (els.capturePreviewImage) els.capturePreviewImage.removeAttribute('src');
   if (pendingCaptureObjectUrl) {
     URL.revokeObjectURL(pendingCaptureObjectUrl);
     pendingCaptureObjectUrl = '';
   }
   pendingCaptureCanvas = null;
+}
+
+function closeCapturePreview() {
+  if (els.capturePreviewDialog?.open) els.capturePreviewDialog.close();
+  else cleanupCapturePreview();
 }
 
 async function saveCapturePreview() {
@@ -1076,6 +1081,14 @@ async function saveCapturePreview() {
 }
 
 async function downloadCapture(full) {
+  const trigger = full ? $('captureFullBtn') : $('captureScreenBtn');
+  const originalText = trigger?.textContent || '';
+
+  if (trigger) {
+    trigger.disabled = true;
+    trigger.textContent = full ? '미리보기 생성 중…' : 'PNG 생성 중…';
+  }
+
   try {
     const canvas = await createCaptureCanvas(full);
 
@@ -1095,6 +1108,11 @@ async function downloadCapture(full) {
   } catch (err) {
     console.error(err);
     showToast(`이미지 생성 실패: ${err.message}`);
+  } finally {
+    if (trigger) {
+      trigger.disabled = false;
+      trigger.textContent = originalText;
+    }
   }
 }
 
