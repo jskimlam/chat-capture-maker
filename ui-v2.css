@@ -36,3 +36,265 @@
 .message-row.theirs + .message-row.mine{margin-top:13px}
 .platform-kakao .bubble{border-radius:13px}
 .platform-kakao .bubble-text{font-weight:400}
+
+
+/* ==========================================================
+   Reference-matched mobile headers: WhatsApp / Telegram
+   Based on the supplied real-app screenshots.
+   ========================================================== */
+
+/* Both references show the app header without a separate fake OS status bar. */
+.phone.platform-whatsapp .phone-statusbar,
+.phone.platform-telegram .phone-statusbar{
+  display:none!important;
+}
+
+/* ---------- WhatsApp ---------- */
+.phone.platform-whatsapp .chat-header{
+  height:72px!important;
+  min-height:72px!important;
+  padding:0 14px 0 10px!important;
+  gap:7px!important;
+  background:#0b141a!important;
+  color:#f7f9fa!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.phone.platform-whatsapp .ccm-whatsapp-back{
+  width:38px!important;
+  height:48px!important;
+  flex:0 0 38px!important;
+  color:#f7f9fa!important;
+}
+.phone.platform-whatsapp .ccm-whatsapp-back svg{
+  width:29px!important;
+  height:29px!important;
+  stroke-width:2.2!important;
+}
+.phone.platform-whatsapp .ccm-whatsapp-profile{
+  min-width:0;
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.phone.platform-whatsapp .ccm-whatsapp-avatar{
+  width:43px!important;
+  height:43px!important;
+  flex:0 0 43px!important;
+  border-radius:50%!important;
+  background:#fff!important;
+}
+.phone.platform-whatsapp .ccm-whatsapp-avatar img{
+  border-radius:50%!important;
+}
+.phone.platform-whatsapp .ccm-header-main{
+  min-width:0!important;
+  padding:0!important;
+  gap:0!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+.phone.platform-whatsapp .ccm-header-title{
+  max-width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  min-height:0!important;
+  font-size:18px!important;
+  font-weight:500!important;
+  line-height:1.2!important;
+  letter-spacing:-.01em!important;
+  color:#f7f9fa!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.phone.platform-whatsapp .ccm-whatsapp-actions{
+  width:38px!important;
+  height:48px!important;
+  flex:0 0 38px!important;
+  margin:0!important;
+  padding:0!important;
+  display:grid!important;
+  place-items:center!important;
+  background:transparent!important;
+}
+.phone.platform-whatsapp .ccm-whatsapp-actions .ccm-icon-btn{
+  display:grid!important;
+  width:38px!important;
+  height:48px!important;
+  color:#f7f9fa!important;
+}
+.phone.platform-whatsapp .ccm-whatsapp-actions svg{
+  width:27px!important;
+  height:27px!important;
+}
+
+/* ---------- Telegram ---------- */
+.phone.platform-telegram .chat-header{
+  height:76px!important;
+  min-height:76px!important;
+  padding:8px 10px!important;
+  gap:8px!important;
+  color:#fff!important;
+  border:0!important;
+  box-shadow:none!important;
+  background:
+    radial-gradient(circle at 18% 45%,rgba(78,104,137,.09) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 72% 35%,rgba(78,104,137,.07) 0 1px,transparent 1.5px),
+    #0d1722!important;
+  background-size:42px 42px,52px 52px,auto!important;
+}
+.phone.platform-telegram .ccm-telegram-back{
+  width:54px!important;
+  height:54px!important;
+  flex:0 0 54px!important;
+  border-radius:50%!important;
+  background:rgba(24,39,57,.96)!important;
+  color:#fff!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.2)!important;
+}
+.phone.platform-telegram .ccm-telegram-back svg{
+  width:30px!important;
+  height:30px!important;
+  stroke-width:2.25!important;
+}
+.phone.platform-telegram .ccm-telegram-profile-pill{
+  min-width:0;
+  height:54px;
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 16px 0 8px;
+  border-radius:28px;
+  background:linear-gradient(105deg,rgba(31,48,70,.98) 5%,rgba(67,52,98,.98) 58%,rgba(111,49,134,.96) 100%);
+  box-shadow:0 3px 10px rgba(0,0,0,.18);
+  overflow:hidden;
+}
+.phone.platform-telegram .ccm-telegram-avatar{
+  width:42px!important;
+  height:42px!important;
+  flex:0 0 42px!important;
+  border-radius:50%!important;
+}
+.phone.platform-telegram .ccm-telegram-profile-pill .ccm-header-main{
+  min-width:0!important;
+  flex:1!important;
+  padding:0!important;
+  gap:2px!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+}
+.phone.platform-telegram .ccm-telegram-profile-pill .ccm-header-title{
+  width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  min-height:0!important;
+  font-size:17px!important;
+  font-weight:700!important;
+  line-height:1.08!important;
+  letter-spacing:-.02em!important;
+  color:#fff!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.phone.platform-telegram .ccm-telegram-profile-pill .ccm-header-subtitle{
+  width:100%!important;
+  padding:0!important;
+  margin:0!important;
+  font-size:10px!important;
+  font-weight:500!important;
+  line-height:1.08!important;
+  color:rgba(212,223,235,.68)!important;
+  opacity:1!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.phone.platform-telegram .ccm-telegram-action-pill{
+  width:98px!important;
+  height:54px!important;
+  flex:0 0 98px!important;
+  margin:0!important;
+  padding:0 8px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-around!important;
+  gap:4px!important;
+  border-radius:28px!important;
+  background:linear-gradient(105deg,rgba(97,48,128,.98),rgba(72,39,105,.98))!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.18)!important;
+}
+.phone.platform-telegram .ccm-telegram-action-pill .ccm-icon-btn{
+  display:grid!important;
+  width:38px!important;
+  height:44px!important;
+  color:#fff!important;
+}
+.phone.platform-telegram .ccm-telegram-action-pill svg{
+  width:27px!important;
+  height:27px!important;
+}
+
+/* Keep the reference header geometry in exported PNG clones too. */
+.capture-export.platform-whatsapp .phone-statusbar,
+.capture-export.platform-telegram .phone-statusbar{
+  display:none!important;
+}
+
+@media(max-width:390px){
+  .phone.platform-whatsapp .chat-header{
+    height:68px!important;
+    min-height:68px!important;
+    padding-left:8px!important;
+    padding-right:10px!important;
+  }
+  .phone.platform-whatsapp .ccm-whatsapp-avatar{
+    width:40px!important;
+    height:40px!important;
+    flex-basis:40px!important;
+  }
+  .phone.platform-whatsapp .ccm-header-title{
+    font-size:17px!important;
+  }
+
+  .phone.platform-telegram .chat-header{
+    height:72px!important;
+    min-height:72px!important;
+    padding:7px 8px!important;
+    gap:6px!important;
+  }
+  .phone.platform-telegram .ccm-telegram-back{
+    width:50px!important;
+    height:50px!important;
+    flex-basis:50px!important;
+  }
+  .phone.platform-telegram .ccm-telegram-profile-pill{
+    height:50px!important;
+    padding-left:7px!important;
+    padding-right:12px!important;
+    gap:8px!important;
+  }
+  .phone.platform-telegram .ccm-telegram-avatar{
+    width:38px!important;
+    height:38px!important;
+    flex-basis:38px!important;
+  }
+  .phone.platform-telegram .ccm-telegram-profile-pill .ccm-header-title{
+    font-size:15.5px!important;
+  }
+  .phone.platform-telegram .ccm-telegram-action-pill{
+    width:88px!important;
+    height:50px!important;
+    flex-basis:88px!important;
+    padding:0 6px!important;
+  }
+  .phone.platform-telegram .ccm-telegram-action-pill .ccm-icon-btn{
+    width:35px!important;
+    height:40px!important;
+  }
+}
