@@ -9,6 +9,7 @@
     search: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/></svg>',
     phone: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.3 3.6l2.1 4.2-2 1.5c1.2 2.5 3.2 4.5 5.7 5.7l1.5-2 4.2 2.1-.7 4c-.1.7-.8 1.2-1.5 1.2C9.8 20.3 3.7 14.2 3.7 6.7c0-.7.5-1.3 1.2-1.5l2.4-.6z"/></svg>',
     more: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>',
+    moreVertical: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.65" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.65" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1.65" fill="currentColor" stroke="none"/></svg>',
     menu: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14"/></svg>',
     video: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6" width="11" height="12" rx="2"/><path d="M14.5 10l5-3v10l-5-3z"/></svg>',
     smile: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 10h.01M15.5 10h.01M8.5 14.5c1.7 2 5.3 2 7 0"/></svg>',
@@ -70,9 +71,9 @@
     } else if (state.platform === 'wechat') {
       body = `<button type="button" class="ccm-header-back" aria-label="뒤로">${icon.back}</button><div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div></div><div class="ccm-header-actions">${headerButton('more','더보기')}</div>`;
     } else if (state.platform === 'whatsapp') {
-      body = `<button type="button" class="ccm-header-back ccm-whatsapp-back" aria-label="뒤로">${icon.back}</button><div class="ccm-whatsapp-profile">${avatarHtml('B','ccm-whatsapp-avatar')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div></div></div><div class="ccm-header-actions ccm-whatsapp-actions">${headerButton('more','더보기')}</div>`;
+      body = `<button type="button" class="ccm-header-back ccm-whatsapp-back" aria-label="뒤로">${icon.back}</button><div class="ccm-whatsapp-profile">${avatarHtml('B','ccm-whatsapp-avatar')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div></div></div><div class="ccm-header-actions ccm-whatsapp-actions">${headerButton('moreVertical','더보기')}</div>`;
     } else {
-      body = `<button type="button" class="ccm-header-back ccm-telegram-back" aria-label="뒤로">${icon.back}</button><div class="ccm-telegram-profile-pill">${avatarHtml('B','ccm-telegram-avatar')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div><div class="ccm-header-subtitle">${online}</div></div></div><div class="ccm-header-actions ccm-telegram-action-pill">${headerButton('phone','전화')}${headerButton('more','더보기')}</div>`;
+      body = `<button type="button" class="ccm-header-back ccm-telegram-back" aria-label="뒤로">${icon.back}</button><div class="ccm-telegram-profile-pill">${avatarHtml('B','ccm-telegram-avatar')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div><div class="ccm-header-subtitle">${online}</div></div></div><div class="ccm-header-actions ccm-telegram-action-pill">${headerButton('phone','전화')}${headerButton('moreVertical','더보기')}</div>`;
     }
     h.innerHTML = body;
   }
