@@ -12,11 +12,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="composer.css" />
-  <link rel="stylesheet" href="mobile.css" />
+  <link rel="stylesheet" href="composer.css?v=4" />
+  <link rel="stylesheet" href="mobile.css?v=4" />
   <link rel="stylesheet" href="theme.css" />
-  <link rel="stylesheet" href="ui-v2.css" />
-  <link rel="stylesheet" href="capture-v3.css?v=3" />
+  <link rel="stylesheet" href="ui-v2.css?v=4" />
+  <link rel="stylesheet" href="capture-v3.css?v=4" />
 </head>
 <body>
   <header class="app-header">
@@ -37,7 +37,7 @@
     <section class="panel controls-panel">
       <div class="panel-title-row">
         <div><p class="step-label">STEP 1</p><h2>대화 설정</h2></div>
-        <button class="icon-btn" id="resetBtn" title="초기화" aria-label="초기화">↻</button>
+        <button class="btn ghost new-chat-btn" id="resetBtn" type="button" title="현재 대화를 모두 비우고 새로 시작">새로 시작</button>
       </div>
 
       <label class="field-label">플랫폼</label>
@@ -93,7 +93,30 @@
         <div><p class="step-label">STEP 2</p><h2>대화 작성</h2></div>
         <span class="hint-chip">화자 버튼으로 선택</span>
       </div>
-      <p class="composer-help">A: / B:를 직접 입력할 필요 없이 메시지별로 <b>나</b> 또는 <b>상대</b>를 선택하세요. 메시지는 입력 즉시 오른쪽 채팅 화면에 반영됩니다.</p>
+      <p class="composer-help"><b>가장 빠른 방법:</b> 아래에 대화를 통째로 붙여넣고 파싱하세요. A는 나, B는 상대방으로 자동 배치되며 실제 화자명으로 붙여넣어도 인식합니다.</p>
+
+      <details class="bulk-import" id="bulkImportPanel" open>
+        <summary>빠른 대화 파서 <span class="legacy-hint">A/B · 화자명 · 시간 자동 인식</span></summary>
+        <div class="parser-map" aria-label="화자 매핑">
+          <span class="parser-map-chip mine"><b>A</b><span id="speakerMapA">나</span><small>오른쪽</small></span>
+          <span class="parser-map-arrow">→</span>
+          <span class="parser-map-chip theirs"><b>B</b><span id="speakerMapB">상대방</span><small>왼쪽</small></span>
+        </div>
+        <p class="parser-rules"><b>입력 예:</b> <code>A: 안녕하세요</code> · <code>B: 네, 확인했습니다</code>. 여러 줄 메시지는 다음 A/B가 나올 때까지 한 말풍선으로 합칩니다. <code>A@오후 7:28:</code>, <code>[19:29] B:</code>처럼 시간을 넣으면 해당 메시지 시간도 유지합니다.</p>
+        <textarea id="rawConversation" rows="11" spellcheck="false" placeholder="A: 오늘 SM 시장 어때?
+B: 중국 내수에서 short covering이 계속 나오고 있어.
+A@오후 7:31: LG도 들어오네.
+B@오후 7:33: 한국과 일본 물량이 타이트해서 중국밖에 없을 듯.">A: 오늘 SM 시장 어때?
+B: 중국 내수에서 prompt short covering이 계속 나오고 있고, LG Chem도 10월 도착분을 보는 것 같아.
+A: LG도 드디어 들어오네. 금호는 구매 끝난 줄 알았는데.
+B: 그런 것 같아. 한국과 일본 쪽 물량이 거의 말라서 필요하면 중국밖에 없을 듯.
+A: 10월 중국 물량은 대략 얼마 정도야?
+B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 필요할 것 같아.</textarea>
+        <div class="inline-actions parser-actions">
+          <button class="btn ghost" id="clearBulkBtn" type="button">입력창 비우기</button>
+          <button class="btn secondary" id="parseBtn" type="button">붙여넣은 대화 파싱</button>
+        </div>
+      </details>
 
       <div class="speaker-add-row">
         <button class="speaker-add-btn mine" id="addMineMessageBtn" type="button">+ 내 메시지</button>
@@ -101,20 +124,7 @@
         <button class="speaker-add-btn next" id="addNextMessageBtn" type="button">+ 다음 화자 자동</button>
       </div>
       <div id="structuredMessageList" class="structured-message-list"></div>
-      <p class="input-shortcut">팁: 메시지 입력 중 Ctrl+Enter(맥은 ⌘+Enter)를 누르면 반대 화자의 다음 메시지 칸이 바로 추가됩니다.</p>
-
-      <details class="bulk-import">
-        <summary>여러 대화를 한 번에 붙여넣기 <span class="legacy-hint">(A: / B: 형식)</span></summary>
-        <textarea id="rawConversation" rows="9" spellcheck="false">A: 오늘 SM 시장 어때?
-B: 중국 내수에서 prompt short covering이 계속 나오고 있고, LG Chem도 10월 도착분을 보는 것 같아.
-A: LG도 드디어 들어오네. 금호는 구매 끝난 줄 알았는데.
-B: 그런 것 같아. 한국과 일본 쪽 물량이 거의 말라서 필요하면 중국밖에 없을 듯.
-A: 10월 중국 물량은 대략 얼마 정도야?
-B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 필요할 것 같아.</textarea>
-        <div class="inline-actions">
-          <button class="btn secondary" id="parseBtn" type="button">일괄 대화 적용</button>
-        </div>
-      </details>
+      <p class="input-shortcut">개별 수정도 가능합니다. 메시지 입력 중 Ctrl+Enter(맥은 ⌘+Enter)를 누르면 반대 화자의 다음 메시지 칸이 바로 추가됩니다.</p>
       <button id="addMessageBtn" type="button" hidden aria-hidden="true"></button>
 
       <details class="advanced-editor">
@@ -199,10 +209,10 @@ B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=4"></script>
   <script src="composer.js"></script>
   <script src="mobile.js"></script>
   <script src="ui-v2.js"></script>
-  <script src="capture-v3.js?v=3"></script>
+  <script src="capture-v3.js?v=4"></script>
 </body>
 </html>
