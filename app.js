@@ -21,7 +21,8 @@ const els = {
   statusTime: $('statusTime'), mockupToggle: $('mockupToggle'), mockupMark: $('mockupMark'),
   readReceiptToggle: $('readReceiptToggle'), apiDialog: $('apiDialog'), gasUrl: $('gasUrl'), appPassword: $('appPassword'),
   apiStatus: $('apiStatus'), connectionPill: $('connectionPill'), toast: $('toast'), headerAvatar: $('headerAvatar'),
-  headerAvatarFallback: $('headerAvatarFallback'), headerProfile: $('headerProfile')
+  headerAvatarFallback: $('headerAvatarFallback'), headerProfile: $('headerProfile'),
+  speakerMapA: $('speakerMapA'), speakerMapB: $('speakerMapB'), bulkImportPanel: $('bulkImportPanel')
 };
 
 const platformNames = { kakao: 'KakaoTalk', wechat: 'WeChat', whatsapp: 'WhatsApp', telegram: 'Telegram' };
@@ -63,6 +64,11 @@ function bindEvents() {
   els.mockupToggle.addEventListener('change', renderPreview);
   els.readReceiptToggle.addEventListener('change', renderPreview);
   $('parseBtn').addEventListener('click', () => parseConversation(true));
+  $('clearBulkBtn')?.addEventListener('click', () => {
+    els.rawConversation.value = '';
+    els.rawConversation.focus();
+    showToast('붙여넣기 입력창을 비웠습니다.');
+  });
   $('addMessageBtn').addEventListener('click', addMessage);
   $('resetBtn').addEventListener('click', resetApp);
   $('saveDraftBtn').addEventListener('click', saveDraft);
@@ -84,24 +90,151 @@ function bindEvents() {
   });
 }
 
+
+function normalizeParsedTime(value) {
+  if (!value) return '';
+  const raw = String(value).trim().replace(/^\[|\]$/g, '').replace(/\s+/g, ' ');
+  let match = raw.match(/^(오전|오후)\s*(\d{1,2}):(\d{2})$/);
+  if (match) {
+    let hour = Number(match[2]);
+    const minute = Number(match[3]);
+    if (hour > 12 || minute > 59) return '';
+    if (match[1] === '오후' && hour < 12) hour += 12;
+    if (match[1] === '오전' && hour === 12) hour = 0;
+    return pad(hour) + ':' + pad(minute);
+  }
+
+  match = raw.match(/^(?:(AM|PM)\s*)?(\d{1,2}):(\d{2})(?:\s*(AM|PM))?$/i);
+  if (!match) return '';
+  let hour = Number(match[2]);
+  const minute = Number(match[3]);
+  const meridiem = (match[1] || match[4] || '').toUpperCase();
+  if (minute > 59 || hour > (meridiem ? 12 : 23)) return '';
+  if (meridiem === 'PM' && hour < 12) hour += 12;
+  if (meridiem === 'AM' && hour === 12) hour = 0;
+  return pad(hour) + ':' + pad(minute);
+}
+
+function speakerFromToken(value) {
+  const token = String(value ?? '').trim().replace(/^\[|\]$/g, '').trim();
+  if (!token) return '';
+  const lower = token.toLocaleLowerCase();
+  const nameA = (els.nameA.value || '').trim().toLocaleLowerCase();
+  const nameB = (els.nameB.value || '').trim().toLocaleLowerCase();
+
+  if (['a', '나', '내', '본인', 'me', 'mine', 'my'].includes(lower) || (nameA && lower === nameA)) return 'A';
+  if (['b', '상대', '상대방', 'other', 'them'].includes(lower) || (nameB && lower === nameB)) return 'B';
+  return '';
+}
+
+function parseDateDirective(line) {
+  const text = String(line || '').trim();
+  let match = text.match(/^\[?date\]?\s*[:：]?\s*(\d{4})[-./](\d{1,2})[-./](\d{1,2})$/i);
+  if (!match) match = text.match(/^(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일(?:\s+\S+요일)?$/);
+  if (!match) return false;
+  els.chatDate.value = match[1] + '-' + pad(Number(match[2])) + '-' + pad(Number(match[3]));
+  return true;
+}
+
+function parseMessageStart(rawLine) {
+  let line = String(rawLine ?? '').trim();
+  if (!line) return null;
+
+  const timePattern = '(?:(?:오전|오후)\\s*\\d{1,2}:\\d{2}|(?:AM|PM)\\s*\\d{1,2}:\\d{2}|\\d{1,2}:\\d{2}(?:\\s*(?:AM|PM))?)';
+  let forcedTime = '';
+  let match = line.match(new RegExp('^\\[(' + timePattern + ')\\]\\s*(.+)$', 'i'));
+
+  if (match) {
+    forcedTime = normalizeParsedTime(match[1]);
+    line = match[2].trim();
+  }
+
+  match = line.match(new RegExp('^(.+?)\\s*\\|\\s*(' + timePattern + ')\\s*\\|\\s*(.*)$', 'i'));
+  if (match) {
+    const speaker = speakerFromToken(match[1]);
+    if (speaker) return { speaker, time: normalizeParsedTime(match[2]), text: match[3] };
+  }
+
+  match = line.match(new RegExp('^(.+?)\\s*@\\s*(' + timePattern + ')\\s*[:：]\\s*(.*)$', 'i'));
+  if (match) {
+    const speaker = speakerFromToken(match[1]);
+    if (speaker) return { speaker, time: normalizeParsedTime(match[2]), text: match[3] };
+  }
+
+  match = line.match(new RegExp('^(.+?)\\s*\\[(' + timePattern + ')\\]\\s*[:：]\\s*(.*)$', 'i'));
+  if (match) {
+    const speaker = speakerFromToken(match[1]);
+    if (speaker) return { speaker, time: normalizeParsedTime(match[2]), text: match[3] };
+  }
+
+  match = line.match(/^(.+?)\s*[:：]\s*(.*)$/);
+  if (match) {
+    const speaker = speakerFromToken(match[1]);
+    if (speaker) {
+      let text = match[2];
+      let time = forcedTime;
+      const inlineTime = text.match(new RegExp('^\\[(' + timePattern + ')\\]\\s*(.*)$', 'i'));
+      if (inlineTime) {
+        time = normalizeParsedTime(inlineTime[1]);
+        text = inlineTime[2];
+      }
+      return { speaker, time, text };
+    }
+  }
+
+  match = line.match(/^\[?([ABab])\]?\s*[)>.-]\s*(.*)$/);
+  if (match) return { speaker: match[1].toUpperCase(), time: forcedTime, text: match[2] };
+
+  match = line.match(new RegExp('^(.+?)\\s+(' + timePattern + ')\\s+(.+)$', 'i'));
+  if (match) {
+    const speaker = speakerFromToken(match[1]);
+    if (speaker) return { speaker, time: normalizeParsedTime(match[2]), text: match[3] };
+  }
+
+  return null;
+}
+
+function updateSpeakerMapLabels() {
+  if (els.speakerMapA) els.speakerMapA.textContent = '나 · ' + (els.nameA.value || 'A');
+  if (els.speakerMapB) els.speakerMapB.textContent = '상대 · ' + (els.nameB.value || 'B');
+}
+
 function parseConversation(notify = true) {
-  const lines = els.rawConversation.value.split(/\r?\n/).map((x) => x.trim()).filter(Boolean);
+  const source = els.rawConversation.value.replace(/\r\n?/g, '\n');
+  const lines = source.split('\n');
   const parsed = [];
   let current = null;
+  let ignored = 0;
 
-  for (const line of lines) {
-    const match = line.match(/^([AB])\s*[:：]\s*(.*)$/i);
-    if (match) {
-      current = { speaker: match[1].toUpperCase(), text: clampText(match[2]), original: clampText(match[2]), time: '' };
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) continue;
+
+    if (parseDateDirective(line)) continue;
+
+    const start = parseMessageStart(line);
+    if (start) {
+      current = {
+        speaker: start.speaker,
+        text: clampText(start.text),
+        original: clampText(start.text),
+        time: start.time || '',
+        manualTime: start.time || ''
+      };
       parsed.push(current);
-    } else if (current) {
-      current.text = clampText(`${current.text}\n${line}`);
-      current.original = clampText(`${current.original}\n${line}`);
+      continue;
+    }
+
+    if (current) {
+      current.text = clampText(current.text + '\n' + line);
+      current.original = clampText(current.original + '\n' + line);
+    } else {
+      ignored += 1;
     }
   }
 
   if (!parsed.length) {
-    if (notify) showToast('A: / B: 형식의 대화를 입력해 주세요.');
+    if (notify) showToast('화자를 인식하지 못했습니다. A: / B: 또는 설정된 화자명으로 시작해 주세요.');
     return;
   }
 
@@ -110,7 +243,11 @@ function parseConversation(notify = true) {
   state.currentLang = 'ko';
   regenerateTimes();
   renderAll();
-  if (notify) showToast(`${parsed.length}개 메시지를 적용했습니다.`);
+
+  if (notify) {
+    const suffix = ignored ? ' · 시작 전 미인식 ' + ignored + '줄 제외' : '';
+    showToast(parsed.length + '개 메시지를 파싱했습니다' + suffix + '.');
+  }
 }
 
 function addMessage() {
@@ -143,6 +280,7 @@ function regenerateTimes() {
 
 function renderAll() {
   els.messageCount.textContent = `${state.messages.length}개`;
+  updateSpeakerMapLabels();
   renderMessageEditor();
   renderPreview();
 }
@@ -596,26 +734,25 @@ function restoreAvatarUi(s) {
   }
 }
 
+
 function resetApp() {
-  if (!confirm('현재 편집 내용을 초기화할까요?')) return;
-  state.platform = 'kakao';
-  state.avatars = { A: '', B: '' };
+  if (state.messages.length && !confirm('현재 대화를 모두 지우고 새로 시작할까요?')) return;
+
+  state.messages = [];
+  state.originals = [];
   state.currentLang = 'ko';
-  els.chatTitle.value = 'Tommy';
-  els.nameA.value = 'lamjskim';
-  els.nameB.value = 'Tommy';
-  els.chatDate.value = localDateValue();
-  els.startTime.value = localTimeValue();
-  els.contextHint.value = '';
-  els.toneSelect.value = 'natural-business';
-  els.mockupToggle.checked = true;
-  els.readReceiptToggle.checked = true;
-  els.rawConversation.value = 'A: 오늘 SM 시장 어때?\nB: 중국 내수에서 prompt short covering이 계속 나오고 있어.\nA: LG도 이제 들어오나 보네.\nB: 한국과 일본 쪽 물량이 거의 말라서 필요하면 중국밖에 없을 듯.';
-  restoreAvatarUi('A');
-  restoreAvatarUi('B');
-  qsa('.platform-card').forEach((x) => x.classList.toggle('active', x.dataset.platform === 'kakao'));
-  parseConversation(false);
-  showToast('편집 내용을 초기화했습니다.');
+  els.rawConversation.value = '';
+
+  if (els.bulkImportPanel) els.bulkImportPanel.open = true;
+  if (els.statusTime) els.statusTime.textContent = els.startTime.value || localTimeValue();
+
+  renderAll();
+
+  requestAnimationFrame(() => {
+    els.rawConversation.focus();
+    els.rawConversation.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  showToast('기존 대화를 모두 지웠습니다. 대화를 붙여넣고 파싱하세요.');
 }
 
 async function createCaptureCanvas(full) {
