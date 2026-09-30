@@ -420,7 +420,7 @@ function makeOutsideMeta(msg, mine) {
   const wrap = document.createElement('span');
   wrap.className = 'outside-meta';
 
-  if (mine && els.readReceiptToggle.checked && state.platform === 'kakao') {
+  if (mine && !els.readReceiptToggle.checked && state.platform === 'kakao') {
     const unread = document.createElement('span');
     unread.className = 'kakao-unread';
     unread.textContent = '1';
