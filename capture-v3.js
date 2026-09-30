@@ -97,7 +97,63 @@
       #captureTarget .outside-meta{margin-bottom:2px!important}
       #captureTarget .date-separator{transition:none}
 
-      /* The export clone lives outside #captureTarget, so mirror the same layout. */
+      /* The export clone lives outside #captureTarget.
+         Canonical desktop geometry is forced here so mobile/APK media queries
+         cannot change avatar, label, bubble, composer or wrapping metrics. */
+      .capture-export.capture-canonical{
+        width:430px!important;
+        min-width:430px!important;
+        max-width:430px!important;
+        font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Segoe UI",sans-serif!important;
+      }
+      .capture-export.capture-canonical .chat-header{
+        height:66px!important;
+        min-height:66px!important;
+        gap:8px!important;
+        padding:0 10px!important;
+      }
+      .capture-export.capture-canonical.platform-kakao .chat-header{padding:0 9px!important}
+      .capture-export.capture-canonical .ccm-header-back{
+        width:38px!important;
+        height:42px!important;
+        flex-basis:38px!important;
+      }
+      .capture-export.capture-canonical .ccm-icon-btn{
+        width:34px!important;
+        height:38px!important;
+      }
+      .capture-export.capture-canonical .ccm-header-back svg,
+      .capture-export.capture-canonical .ccm-icon-btn svg{
+        width:22px!important;
+        height:22px!important;
+      }
+      .capture-export.capture-canonical .ccm-header-title{
+        font-size:16px!important;
+        line-height:1.2!important;
+      }
+      .capture-export.capture-canonical.platform-kakao .ccm-header-title{font-size:18px!important}
+      .capture-export.capture-canonical .chat-scroll{
+        padding:16px 14px 10px!important;
+      }
+      .capture-export.capture-canonical .message-list{
+        padding-bottom:0!important;
+      }
+      .capture-export.capture-canonical .message-stack{
+        max-width:74%!important;
+      }
+      .capture-export.capture-canonical.platform-wechat .message-stack{
+        max-width:70%!important;
+      }
+      .capture-export.capture-canonical .msg-avatar,
+      .capture-export.capture-canonical .avatar-spacer{
+        width:40px!important;
+        height:40px!important;
+        flex:0 0 40px!important;
+      }
+      .capture-export.capture-canonical .message-row{
+        gap:8px!important;
+        margin:0 0 6px!important;
+      }
       .capture-export .message-row{margin:0 0 6px!important}
       .capture-export .message-row + .message-row{margin-top:2px!important}
       .capture-export .message-row.mine + .message-row.theirs,
@@ -123,6 +179,24 @@
       .capture-export.platform-whatsapp .bubble,
       .capture-export.platform-telegram .bubble{padding:10px 13px 10px!important}
       .capture-export .outside-meta{margin-bottom:2px!important}
+      .capture-export.capture-canonical .composer-bar{
+        height:58px!important;
+        min-height:58px!important;
+        gap:7px!important;
+        padding:7px 10px!important;
+      }
+      .capture-export.capture-canonical .ccm-composer-icon{
+        width:34px!important;
+        height:38px!important;
+        flex:0 0 34px!important;
+      }
+      .capture-export.capture-canonical .fake-input{
+        height:40px!important;
+        min-height:40px!important;
+        border-radius:21px!important;
+        padding:0 13px!important;
+        font-size:12px!important;
+      }
 
       /* Per-message time editor. */
       .structured-message-meta{align-items:center!important;flex-wrap:wrap!important}
@@ -336,7 +410,7 @@
     const sourceRect = source.getBoundingClientRect();
     const exportWidth = 430;
     const clone = source.cloneNode(true);
-    clone.classList.add('capture-export', full ? 'capture-full' : 'capture-screen');
+    clone.classList.add('capture-export', 'capture-canonical', full ? 'capture-full' : 'capture-screen');
     stripIds(clone);
 
     /* Saved images are clean chat screenshots, not phone mockups. */
@@ -368,7 +442,10 @@
 
     const stage = document.createElement('div');
     stage.id = 'ccmCaptureStage';
-    stage.style.width = `${exportWidth}px`;
+    stage.style.setProperty('width', `${exportWidth}px`, 'important');
+    stage.style.setProperty('min-width', `${exportWidth}px`, 'important');
+    stage.style.setProperty('max-width', `${exportWidth}px`, 'important');
+    stage.style.setProperty('contain', 'none', 'important');
     stage.appendChild(clone);
     document.body.appendChild(stage);
 
