@@ -24,7 +24,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 public class MainActivity extends Activity {
-    private static final String APP_URL = "https://jskimlam.github.io/chat-capture-maker/?android=1.4.0";
+    private static final String APP_URL = "https://jskimlam.github.io/chat-capture-maker/?android=1.4.1";
     private static final int FILE_CHOOSER_REQUEST = 1001;
 
     private WebView webView;
@@ -89,12 +89,24 @@ public class MainActivity extends Activity {
         String script = "(() => {" +
                 "if (window.__ccmAndroidPatched) return;" +
                 "window.__ccmAndroidPatched = true;" +
+                "window.__ccmAndroid = true;" +
                 "const originalClick = HTMLAnchorElement.prototype.click;" +
                 "HTMLAnchorElement.prototype.click = function(){" +
                 "try {" +
-                "if (this.download && typeof this.href === 'string' && this.href.startsWith('data:image/png') && window.AndroidBridge) {" +
+                "if (this.download && typeof this.href === 'string' && window.AndroidBridge) {" +
+                "if (this.href.startsWith('data:image/png')) {" +
                 "window.AndroidBridge.saveImage(this.href, this.download);" +
                 "return;" +
+                "}" +
+                "if (this.href.startsWith('blob:')) {" +
+                "const href = this.href; const name = this.download;" +
+                "fetch(href).then(r => r.blob()).then(blob => {" +
+                "const reader = new FileReader();" +
+                "reader.onloadend = () => window.AndroidBridge.saveImage(reader.result, name);" +
+                "reader.readAsDataURL(blob);" +
+                "}).catch(() => originalClick.call(this));" +
+                "return;" +
+                "}" +
                 "}" +
                 "} catch(e) {}" +
                 "return originalClick.call(this);" +
