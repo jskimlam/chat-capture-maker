@@ -23,7 +23,9 @@ const els = {
   apiStatus: $('apiStatus'), connectionPill: $('connectionPill'), toast: $('toast'), headerAvatar: $('headerAvatar'),
   headerAvatarFallback: $('headerAvatarFallback'), headerProfile: $('headerProfile'),
   speakerMapA: $('speakerMapA'), speakerMapB: $('speakerMapB'), bulkImportPanel: $('bulkImportPanel'),
-  draftDialog: $('draftDialog'), draftList: $('draftList')
+  draftDialog: $('draftDialog'), draftList: $('draftList'),
+  capturePreviewDialog: $('capturePreviewDialog'), capturePreviewImage: $('capturePreviewImage'),
+  capturePreviewMeta: $('capturePreviewMeta')
 };
 
 const platformNames = { kakao: 'KakaoTalk', wechat: 'WeChat', whatsapp: 'WhatsApp', telegram: 'Telegram' };
@@ -82,6 +84,12 @@ function bindEvents() {
   });
   $('captureScreenBtn').addEventListener('click', () => downloadCapture(false));
   $('captureFullBtn').addEventListener('click', () => downloadCapture(true));
+  $('closeCapturePreviewBtn')?.addEventListener('click', closeCapturePreview);
+  $('closeCapturePreviewBottomBtn')?.addEventListener('click', closeCapturePreview);
+  $('saveCapturePreviewBtn')?.addEventListener('click', saveCapturePreview);
+  els.capturePreviewDialog?.addEventListener('click', (e) => {
+    if (e.target === els.capturePreviewDialog) closeCapturePreview();
+  });
   $('apiSettingsBtn').addEventListener('click', openApiDialog);
   $('connectApiBtn').addEventListener('click', connectApi);
   $('disconnectApiBtn').addEventListener('click', disconnectApi);
@@ -989,19 +997,104 @@ async function createCaptureCanvas(full) {
   }
 }
 
+let pendingCaptureCanvas = null;
+let pendingCaptureObjectUrl = '';
+
+function captureFileName(full = true) {
+  const safeTitle = (els.chatTitle.value || 'chat').replace(/[^\w가-힣ぁ-んァ-ン一-龥-]+/g, '_');
+  const stamp = `${els.chatDate.value}_${state.platform}_${safeTitle}`;
+  return `chat_${stamp}${full ? '_full' : ''}.png`;
+}
+
+function canvasToBlob(canvas) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) resolve(blob);
+      else reject(new Error('PNG 미리보기를 만들지 못했습니다.'));
+    }, 'image/png');
+  });
+}
+
+async function openCapturePreview(canvas) {
+  pendingCaptureCanvas = canvas;
+
+  if (pendingCaptureObjectUrl) {
+    URL.revokeObjectURL(pendingCaptureObjectUrl);
+    pendingCaptureObjectUrl = '';
+  }
+
+  const blob = await canvasToBlob(canvas);
+  pendingCaptureObjectUrl = URL.createObjectURL(blob);
+
+  if (els.capturePreviewImage) {
+    els.capturePreviewImage.src = pendingCaptureObjectUrl;
+  }
+
+  if (els.capturePreviewMeta) {
+    const cssWidth = Number(canvas.dataset.cssWidth || 0);
+    const cssHeight = Number(canvas.dataset.cssHeight || 0);
+    const sizeText = cssWidth && cssHeight
+      ? `${cssWidth} × ${cssHeight}px 화면 · PNG ${canvas.width} × ${canvas.height}px`
+      : `PNG ${canvas.width} × ${canvas.height}px`;
+    els.capturePreviewMeta.textContent = sizeText + ' · 저장 전 전체 이미지를 확인하세요.';
+  }
+
+  if (els.capturePreviewDialog && !els.capturePreviewDialog.open) {
+    els.capturePreviewDialog.showModal();
+  }
+}
+
+function closeCapturePreview() {
+  if (els.capturePreviewDialog?.open) els.capturePreviewDialog.close();
+  if (els.capturePreviewImage) els.capturePreviewImage.removeAttribute('src');
+  if (pendingCaptureObjectUrl) {
+    URL.revokeObjectURL(pendingCaptureObjectUrl);
+    pendingCaptureObjectUrl = '';
+  }
+  pendingCaptureCanvas = null;
+}
+
+async function saveCapturePreview() {
+  if (!pendingCaptureCanvas) {
+    showToast('저장할 캡처 미리보기가 없습니다.');
+    return;
+  }
+
+  try {
+    const blob = await canvasToBlob(pendingCaptureCanvas);
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = captureFileName(true);
+    link.href = url;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    showToast('전체 대화 PNG를 저장했습니다.');
+  } catch (err) {
+    console.error(err);
+    showToast(`PNG 저장 실패: ${err.message}`);
+  }
+}
+
 async function downloadCapture(full) {
   try {
     const canvas = await createCaptureCanvas(full);
+
+    if (full) {
+      await openCapturePreview(canvas);
+      return;
+    }
+
+    const blob = await canvasToBlob(canvas);
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    const safeTitle = (els.chatTitle.value || 'chat').replace(/[^\w가-힣ぁ-んァ-ン一-龥-]+/g, '_');
-    const stamp = `${els.chatDate.value}_${state.platform}_${safeTitle}`;
-    link.download = `chat_${stamp}${full ? '_full' : ''}.png`;
-    link.href = canvas.toDataURL('image/png');
+    link.download = captureFileName(false);
+    link.href = url;
     link.click();
-    showToast('PNG 이미지를 저장했습니다.');
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+    showToast('현재 화면 PNG를 저장했습니다.');
   } catch (err) {
     console.error(err);
-    showToast(`이미지 저장 실패: ${err.message}`);
+    showToast(`이미지 생성 실패: ${err.message}`);
   }
 }
 
