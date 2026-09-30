@@ -215,3 +215,161 @@ html[data-app-theme="light"] .capture-preview-stage{
     min-height:46px;
   }
 }
+
+
+/* Capture preview UX v2: compact floating viewer with fit-first behavior. */
+.capture-preview-dialog{
+  width:min(860px,calc(100vw - 36px));
+  max-width:none;
+  padding:0;
+  border:0;
+  background:transparent;
+}
+.capture-preview-dialog::backdrop{
+  background:rgba(2,7,13,.58);
+  backdrop-filter:blur(5px);
+}
+.capture-preview-card{
+  height:min(84svh,780px);
+  max-height:84svh;
+  border-radius:20px;
+}
+.capture-preview-head{
+  flex:0 0 auto;
+  align-items:center;
+  padding:13px 15px 11px;
+}
+.capture-preview-head-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+}
+.capture-preview-zoom-btn{
+  min-height:34px;
+  padding:7px 10px;
+  font-size:10px;
+  white-space:nowrap;
+}
+.capture-preview-stage{
+  min-height:0;
+  flex:1 1 auto;
+}
+
+/* Default: show the complete long screenshot at once. No scrolling required. */
+.capture-preview-fit .capture-preview-stage{
+  overflow:hidden!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:10px!important;
+}
+.capture-preview-fit .capture-preview-stage img{
+  width:auto!important;
+  height:auto!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  box-shadow:0 12px 38px rgba(0,0,0,.32);
+}
+
+/* Optional detail inspection: real export width with local scrolling only. */
+.capture-preview-actual .capture-preview-stage{
+  overflow:auto!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  padding:14px!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.capture-preview-actual .capture-preview-stage img{
+  width:430px!important;
+  min-width:430px!important;
+  max-width:none!important;
+  height:auto!important;
+}
+
+/* Phone: floating card, not a near-full-screen bottom sheet. */
+@media(max-width:699px){
+  .capture-preview-dialog{
+    width:calc(100vw - 18px)!important;
+    max-width:520px!important;
+    margin:auto!important;
+  }
+  .capture-preview-card{
+    height:min(82svh,700px)!important;
+    max-height:82svh!important;
+    border-radius:18px!important;
+  }
+  .capture-preview-head{
+    padding:10px 11px 9px!important;
+    gap:8px!important;
+  }
+  .capture-preview-head .step-label{
+    display:none!important;
+  }
+  .capture-preview-head h2{
+    font-size:14px!important;
+    margin:0!important;
+  }
+  .capture-preview-meta{
+    margin:3px 0 0!important;
+    font-size:8.5px!important;
+    line-height:1.35!important;
+  }
+  .capture-preview-head-actions{
+    gap:5px!important;
+  }
+  .capture-preview-zoom-btn{
+    min-height:32px!important;
+    padding:6px 8px!important;
+    font-size:9px!important;
+  }
+  .capture-preview-head .icon-btn{
+    width:32px!important;
+    height:32px!important;
+  }
+  .capture-preview-fit .capture-preview-stage{
+    padding:7px!important;
+  }
+  .capture-preview-actions{
+    grid-template-columns:.8fr 1.2fr!important;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;
+  }
+  .capture-preview-actions .btn{
+    min-height:40px!important;
+    font-size:10px!important;
+  }
+}
+
+/* Galaxy Fold 7/8 unfolded: compact centered viewer over the two-pane workspace. */
+@media(min-width:700px) and (max-width:1100px){
+  .capture-preview-dialog{
+    width:min(720px,78vw)!important;
+    margin:auto!important;
+  }
+  .capture-preview-card{
+    height:min(76svh,690px)!important;
+    max-height:76svh!important;
+    border-radius:20px!important;
+  }
+  .capture-preview-head{
+    padding:11px 13px 9px!important;
+  }
+  .capture-preview-head h2{
+    font-size:15px!important;
+  }
+  .capture-preview-meta{
+    font-size:9px!important;
+  }
+  .capture-preview-fit .capture-preview-stage{
+    padding:8px!important;
+  }
+  .capture-preview-actions{
+    padding:9px 12px 10px!important;
+  }
+  .capture-preview-actions .btn{
+    min-height:38px!important;
+    padding:7px 12px!important;
+    font-size:10px!important;
+  }
+}
