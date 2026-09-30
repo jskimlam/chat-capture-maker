@@ -343,10 +343,10 @@
 
 /* Platform-specific last-message to composer spacing */
 .phone.platform-kakao .chat-scroll{
-  padding-bottom:34px!important;
+  padding-bottom:10px!important;
 }
 .phone.platform-kakao .message-list{
-  padding-bottom:4px;
+  padding-bottom:0!important;
 }
 .phone.platform-wechat .chat-scroll,
 .phone.platform-whatsapp .chat-scroll,
