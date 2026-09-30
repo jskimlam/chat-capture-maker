@@ -83,32 +83,32 @@
     style.id = 'ccmFinalPolishStyles';
     style.textContent = `
       /* Final spacing pass: closer to native messaging-app rhythm. */
-      #captureTarget .message-row{margin:0 0 7px!important}
-      #captureTarget .message-row + .message-row{margin-top:3px!important}
+      #captureTarget .message-row{margin:0 0 6px!important}
+      #captureTarget .message-row + .message-row{margin-top:2px!important}
       #captureTarget .message-row.mine + .message-row.theirs,
-      #captureTarget .message-row.theirs + .message-row.mine{margin-top:10px!important}
-      #captureTarget .sender-name{margin-bottom:6px!important}
-      #captureTarget .bubble{padding:9px 13px 11px!important;line-height:1.42!important}
+      #captureTarget .message-row.theirs + .message-row.mine{margin-top:13px!important}
+      #captureTarget .sender-name{margin-bottom:8px!important}
+      #captureTarget .bubble{padding:10px 13px 11px!important;line-height:1.48!important}
       #captureTarget .bubble-text{display:block;transform:translateY(-1px)}
-      #captureTarget.platform-kakao .bubble{padding:9px 14px 11px!important}
-      #captureTarget.platform-wechat .bubble{padding:9px 13px 10px!important}
+      #captureTarget.platform-kakao .bubble{padding:10px 14px 11px!important}
+      #captureTarget.platform-wechat .bubble{padding:10px 13px 10px!important}
       #captureTarget.platform-whatsapp .bubble,
-      #captureTarget.platform-telegram .bubble{padding:9px 13px 10px!important}
+      #captureTarget.platform-telegram .bubble{padding:10px 13px 10px!important}
       #captureTarget .outside-meta{margin-bottom:2px!important}
       #captureTarget .date-separator{transition:none}
 
       /* The export clone lives outside #captureTarget, so mirror the same layout. */
-      .capture-export .message-row{margin:0 0 7px!important}
-      .capture-export .message-row + .message-row{margin-top:3px!important}
+      .capture-export .message-row{margin:0 0 6px!important}
+      .capture-export .message-row + .message-row{margin-top:2px!important}
       .capture-export .message-row.mine + .message-row.theirs,
-      .capture-export .message-row.theirs + .message-row.mine{margin-top:10px!important}
-      .capture-export .sender-name{margin-bottom:6px!important}
-      .capture-export .bubble{padding:9px 13px 11px!important;line-height:1.42!important}
+      .capture-export .message-row.theirs + .message-row.mine{margin-top:13px!important}
+      .capture-export .sender-name{margin-bottom:8px!important}
+      .capture-export .bubble{padding:10px 13px 11px!important;line-height:1.48!important}
       .capture-export .bubble-text{display:block;transform:translateY(-1px)}
-      .capture-export.platform-kakao .bubble{padding:9px 14px 11px!important}
-      .capture-export.platform-wechat .bubble{padding:9px 13px 10px!important}
+      .capture-export.platform-kakao .bubble{padding:10px 14px 11px!important}
+      .capture-export.platform-wechat .bubble{padding:10px 13px 10px!important}
       .capture-export.platform-whatsapp .bubble,
-      .capture-export.platform-telegram .bubble{padding:9px 13px 10px!important}
+      .capture-export.platform-telegram .bubble{padding:10px 13px 10px!important}
       .capture-export .outside-meta{margin-bottom:2px!important}
 
       /* Per-message time editor. */
