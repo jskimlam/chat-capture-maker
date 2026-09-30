@@ -1,5 +1,5 @@
 (() => {
-  const mq = window.matchMedia('(max-width: 820px)');
+  const mq = window.matchMedia('(max-width: 699px)');
   const editTab = document.getElementById('mobileEditTab');
   const previewTab = document.getElementById('mobilePreviewTab');
   const controls = document.querySelector('.controls-panel');
@@ -58,7 +58,7 @@
     full.type = 'button';
     full.id = 'mobileCaptureFullBtn';
     full.className = 'btn primary mobile-only-action';
-    full.textContent = '전체 대화 PNG';
+    full.textContent = '전체 대화 미리보기';
     full.addEventListener('click', () => document.getElementById('captureFullBtn')?.click());
     previewToolbar.append(full);
   }
