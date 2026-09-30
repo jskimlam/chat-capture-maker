@@ -1016,6 +1016,41 @@ function canvasToBlob(canvas) {
   });
 }
 
+function hasAndroidImageBridge() {
+  try {
+    return Boolean(window.AndroidBridge && typeof window.AndroidBridge.saveImage === 'function');
+  } catch (_) {
+    return false;
+  }
+}
+
+async function saveCanvasPng(canvas, fileName) {
+  /* Android APK WebView does not reliably download blob: URLs.
+     Use the native bridge directly so the image lands in Pictures/ChatCaptureMaker. */
+  if (hasAndroidImageBridge()) {
+    const dataUrl = canvas.toDataURL('image/png');
+    window.AndroidBridge.saveImage(dataUrl, fileName);
+    return 'android';
+  }
+
+  const blob = await canvasToBlob(canvas);
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.download = fileName;
+  link.href = url;
+  link.style.display = 'none';
+  document.body.appendChild(link);
+
+  try {
+    link.click();
+  } finally {
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2500);
+  }
+
+  return 'browser';
+}
+
 async function openCapturePreview(canvas) {
   pendingCaptureCanvas = canvas;
 
@@ -1065,18 +1100,26 @@ async function saveCapturePreview() {
     return;
   }
 
+  const button = $('saveCapturePreviewBtn');
+  const originalText = button?.textContent || 'PNG 저장';
+  if (button) {
+    button.disabled = true;
+    button.textContent = '저장 중…';
+  }
+
   try {
-    const blob = await canvasToBlob(pendingCaptureCanvas);
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = captureFileName(true);
-    link.href = url;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
-    showToast('전체 대화 PNG를 저장했습니다.');
+    const target = await saveCanvasPng(pendingCaptureCanvas, captureFileName(true));
+    showToast(target === 'android'
+      ? 'PNG 저장 요청 완료 · Pictures/ChatCaptureMaker'
+      : '전체 대화 PNG를 저장했습니다.');
   } catch (err) {
     console.error(err);
     showToast(`PNG 저장 실패: ${err.message}`);
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
   }
 }
 
@@ -1097,14 +1140,10 @@ async function downloadCapture(full) {
       return;
     }
 
-    const blob = await canvasToBlob(canvas);
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = captureFileName(false);
-    link.href = url;
-    link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
-    showToast('현재 화면 PNG를 저장했습니다.');
+    const target = await saveCanvasPng(canvas, captureFileName(false));
+    showToast(target === 'android'
+      ? 'PNG 저장 요청 완료 · Pictures/ChatCaptureMaker'
+      : '현재 화면 PNG를 저장했습니다.');
   } catch (err) {
     console.error(err);
     showToast(`이미지 생성 실패: ${err.message}`);
