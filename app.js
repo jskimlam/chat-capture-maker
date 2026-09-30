@@ -25,7 +25,7 @@ const els = {
   speakerMapA: $('speakerMapA'), speakerMapB: $('speakerMapB'), bulkImportPanel: $('bulkImportPanel'),
   draftDialog: $('draftDialog'), draftList: $('draftList'),
   capturePreviewDialog: $('capturePreviewDialog'), capturePreviewImage: $('capturePreviewImage'),
-  capturePreviewMeta: $('capturePreviewMeta')
+  capturePreviewMeta: $('capturePreviewMeta'), capturePreviewZoomBtn: $('capturePreviewZoomBtn')
 };
 
 const platformNames = { kakao: 'KakaoTalk', wechat: 'WeChat', whatsapp: 'WhatsApp', telegram: 'Telegram' };
@@ -87,6 +87,7 @@ function bindEvents() {
   $('closeCapturePreviewBtn')?.addEventListener('click', closeCapturePreview);
   $('closeCapturePreviewBottomBtn')?.addEventListener('click', closeCapturePreview);
   $('saveCapturePreviewBtn')?.addEventListener('click', saveCapturePreview);
+  els.capturePreviewZoomBtn?.addEventListener('click', toggleCapturePreviewMode);
   els.capturePreviewDialog?.addEventListener('click', (e) => {
     if (e.target === els.capturePreviewDialog) closeCapturePreview();
   });
@@ -1051,6 +1052,31 @@ async function saveCanvasPng(canvas, fileName) {
   return 'browser';
 }
 
+function setCapturePreviewMode(mode = 'fit') {
+  const actual = mode === 'actual';
+  const dialog = els.capturePreviewDialog;
+  if (!dialog) return;
+
+  dialog.classList.toggle('capture-preview-fit', !actual);
+  dialog.classList.toggle('capture-preview-actual', actual);
+
+  if (els.capturePreviewZoomBtn) {
+    els.capturePreviewZoomBtn.textContent = actual ? '화면 맞춤' : '원본 크기';
+    els.capturePreviewZoomBtn.setAttribute('aria-pressed', String(actual));
+  }
+
+  const stage = dialog.querySelector('.capture-preview-stage');
+  if (stage) {
+    stage.scrollTop = 0;
+    stage.scrollLeft = 0;
+  }
+}
+
+function toggleCapturePreviewMode() {
+  const actual = els.capturePreviewDialog?.classList.contains('capture-preview-actual');
+  setCapturePreviewMode(actual ? 'fit' : 'actual');
+}
+
 async function openCapturePreview(canvas) {
   pendingCaptureCanvas = canvas;
 
@@ -1075,12 +1101,15 @@ async function openCapturePreview(canvas) {
     els.capturePreviewMeta.textContent = sizeText + ' · 저장 전 전체 이미지를 확인하세요.';
   }
 
+  setCapturePreviewMode('fit');
+
   if (els.capturePreviewDialog && !els.capturePreviewDialog.open) {
     els.capturePreviewDialog.showModal();
   }
 }
 
 function cleanupCapturePreview() {
+  setCapturePreviewMode('fit');
   if (els.capturePreviewImage) els.capturePreviewImage.removeAttribute('src');
   if (pendingCaptureObjectUrl) {
     URL.revokeObjectURL(pendingCaptureObjectUrl);
