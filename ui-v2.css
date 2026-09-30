@@ -298,3 +298,44 @@
     height:40px!important;
   }
 }
+
+
+/* Platform typography matching */
+.phone.platform-whatsapp,
+.phone.platform-whatsapp .bubble,
+.phone.platform-whatsapp .ccm-header-title,
+.phone.platform-whatsapp .fake-input,
+.phone.platform-whatsapp .msg-time,
+.phone.platform-whatsapp .date-separator{
+  font-family:system-ui,-apple-system,"Roboto","Noto Sans KR","Segoe UI",sans-serif!important;
+}
+.phone.platform-whatsapp .bubble{
+  font-weight:400!important;
+  letter-spacing:-.012em!important;
+}
+.phone.platform-whatsapp .ccm-header-title{
+  font-weight:500!important;
+  letter-spacing:-.015em!important;
+}
+
+.phone.platform-telegram,
+.phone.platform-telegram .bubble,
+.phone.platform-telegram .ccm-header-title,
+.phone.platform-telegram .ccm-header-subtitle,
+.phone.platform-telegram .fake-input,
+.phone.platform-telegram .msg-time,
+.phone.platform-telegram .date-separator{
+  font-family:system-ui,-apple-system,"Roboto","Noto Sans KR","Segoe UI",sans-serif!important;
+}
+.phone.platform-telegram .bubble{
+  font-weight:400!important;
+  letter-spacing:-.014em!important;
+}
+.phone.platform-telegram .ccm-header-title{
+  font-weight:700!important;
+  letter-spacing:-.02em!important;
+}
+.phone.platform-telegram .ccm-header-subtitle{
+  font-weight:400!important;
+  letter-spacing:-.01em!important;
+}
