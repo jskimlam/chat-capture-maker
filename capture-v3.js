@@ -33,6 +33,28 @@
     root.querySelectorAll('[id]').forEach(node => node.removeAttribute('id'));
   }
 
+  /* Freeze the exact live preview geometry before moving the clone off-screen.
+     This makes the exported PNG WYSIWYG on Android/WebView, Fold and desktop:
+     font metrics, bubble widths, sender-name spacing and avatar sizes come from
+     the visible chat itself instead of being recalculated by export CSS. */
+  function freezeLiveStyles(source, clone) {
+    const sourceNodes = [source, ...source.querySelectorAll('*')];
+    const cloneNodes = [clone, ...clone.querySelectorAll('*')];
+    const count = Math.min(sourceNodes.length, cloneNodes.length);
+
+    for (let i = 0; i < count; i += 1) {
+      const from = sourceNodes[i];
+      const to = cloneNodes[i];
+      const computed = getComputedStyle(from);
+
+      for (let p = 0; p < computed.length; p += 1) {
+        const prop = computed[p];
+        const value = computed.getPropertyValue(prop);
+        if (value) to.style.setProperty(prop, value, 'important');
+      }
+    }
+  }
+
   function isValidTime(value) {
     return /^([01]\d|2[0-3]):[0-5]\d$/.test(String(value || ''));
   }
@@ -408,25 +430,30 @@
   function buildCaptureClone(full) {
     const source = els.captureTarget;
     const sourceRect = source.getBoundingClientRect();
-    const exportWidth = 430;
+    const exportWidth = Math.max(1, Math.ceil(sourceRect.width));
     const clone = source.cloneNode(true);
-    clone.classList.add('capture-export', 'capture-canonical', full ? 'capture-full' : 'capture-screen');
+
+    /* Copy what the user is actually looking at BEFORE moving the clone.
+       Do not rebuild a separate desktop/mobile layout for export. */
+    freezeLiveStyles(source, clone);
+    clone.classList.add('capture-export', 'capture-wysiwyg', full ? 'capture-full' : 'capture-screen');
     stripIds(clone);
 
-    /* Saved images are clean chat screenshots, not phone mockups. */
+    /* Saved images remain clean chat screenshots, without the phone frame/status bar. */
     clone.querySelector('.phone-statusbar')?.remove();
     clone.querySelectorAll('.mockup-mark').forEach(mark => mark.remove());
+    clone.style.setProperty('width', `${exportWidth}px`, 'important');
+    clone.style.setProperty('min-width', `${exportWidth}px`, 'important');
+    clone.style.setProperty('max-width', `${exportWidth}px`, 'important');
     clone.style.setProperty('border', '0', 'important');
     clone.style.setProperty('border-radius', '0', 'important');
     clone.style.setProperty('box-shadow', 'none', 'important');
+    clone.style.setProperty('transform', 'none', 'important');
+    clone.style.setProperty('margin', '0', 'important');
+    clone.style.setProperty('overflow', 'hidden', 'important');
 
     applyDateVisibility(clone);
     applyTimeVisibility(clone);
-
-    clone.style.setProperty('width', `${exportWidth}px`, 'important');
-    clone.style.setProperty('max-width', 'none', 'important');
-    clone.style.setProperty('transform', 'none', 'important');
-    clone.style.setProperty('margin', '0', 'important');
 
     if (full) {
       clone.style.setProperty('height', 'auto', 'important');
@@ -451,8 +478,11 @@
 
     const cloneScroll = clone.querySelector('.chat-scroll');
     if (cloneScroll) {
+      /* Width/padding/font stay frozen from the live chat. Only vertical clipping
+         is released for a full-conversation capture. */
       if (full) {
         cloneScroll.style.setProperty('overflow', 'visible', 'important');
+        cloneScroll.style.setProperty('overflow-x', 'hidden', 'important');
         cloneScroll.style.setProperty('height', 'auto', 'important');
         cloneScroll.style.setProperty('min-height', '0', 'important');
         cloneScroll.style.setProperty('max-height', 'none', 'important');
@@ -524,9 +554,9 @@
         scrollY: 0,
         width,
         height,
-        /* Render exports against a desktop-sized virtual viewport so Android/mobile
-           media queries cannot collapse sender-name / bubble spacing. */
-        windowWidth: 1200,
+        /* Match the current live preview environment. The clone's computed
+           geometry has already been frozen, so export cannot reflow it. */
+        windowWidth: Math.max(1, window.innerWidth),
         windowHeight: Math.max(window.innerHeight, height + 200),
         imageTimeout: 4000,
         removeContainer: true
