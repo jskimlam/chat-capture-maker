@@ -16,7 +16,7 @@
   <link rel="stylesheet" href="mobile.css?v=4" />
   <link rel="stylesheet" href="theme.css?v=5" />
   <link rel="stylesheet" href="ui-v2.css?v=9" />
-  <link rel="stylesheet" href="capture-v3.css?v=4" />
+  <link rel="stylesheet" href="capture-v3.css?v=5" />
 </head>
 <body>
   <header class="app-header">
@@ -29,7 +29,7 @@
       <span class="connection-pill" id="connectionPill"><i></i><span>AI 미연결</span></span>
       <button class="btn ghost" id="saveDraftBtn">임시 저장</button>
       <button class="btn ghost" id="loadDraftBtn">불러오기</button>
-      <button class="btn primary" id="captureFullBtn">전체 대화 PNG</button>
+      <button class="btn primary" id="captureFullBtn">전체 대화 미리보기</button>
     </div>
   </header>
 
@@ -188,6 +188,26 @@ B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 
     <button type="button" class="mobile-tab" id="mobilePreviewTab" role="tab" aria-selected="false">미리보기<span>채팅 화면 · 저장</span></button>
   </nav>
 
+  <dialog id="capturePreviewDialog" class="capture-preview-dialog">
+    <div class="capture-preview-card">
+      <div class="capture-preview-head">
+        <div>
+          <p class="step-label">FULL CAPTURE PREVIEW</p>
+          <h2>전체 대화 캡처 미리보기</h2>
+          <p id="capturePreviewMeta" class="capture-preview-meta"></p>
+        </div>
+        <button class="icon-btn" id="closeCapturePreviewBtn" type="button" aria-label="닫기">×</button>
+      </div>
+      <div class="capture-preview-stage">
+        <img id="capturePreviewImage" alt="전체 대화 캡처 미리보기" />
+      </div>
+      <div class="capture-preview-actions">
+        <button class="btn ghost" id="closeCapturePreviewBottomBtn" type="button">닫기</button>
+        <button class="btn primary" id="saveCapturePreviewBtn" type="button">PNG 저장</button>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="draftDialog" class="draft-dialog">
     <div class="dialog-card draft-dialog-card">
       <div class="panel-title-row compact">
@@ -223,7 +243,7 @@ B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
   <script src="composer.js"></script>
   <script src="mobile.js"></script>
   <script src="ui-v2.js?v=6"></script>
