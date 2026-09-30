@@ -182,7 +182,7 @@ function parseMessageStart(rawLine) {
     }
   }
 
-  match = line.match(/^\[?([ABab])\]?\s*[)>.-]\s*(.*)$/);
+  match = line.match(/^\[?([ABab])\]?\s*(?:[:：>).-]\s*|\s+)(.*)$/);
   if (match) return { speaker: match[1].toUpperCase(), time: forcedTime, text: match[2] };
 
   match = line.match(new RegExp('^(.+?)\\s+(' + timePattern + ')\\s+(.+)$', 'i'));
