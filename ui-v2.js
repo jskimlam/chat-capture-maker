@@ -70,9 +70,9 @@
     } else if (state.platform === 'wechat') {
       body = `<button type="button" class="ccm-header-back" aria-label="뒤로">${icon.back}</button><div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div></div><div class="ccm-header-actions">${headerButton('more','더보기')}</div>`;
     } else if (state.platform === 'whatsapp') {
-      body = `<button type="button" class="ccm-header-back" aria-label="뒤로">${icon.back}</button>${avatarHtml('B')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div><div class="ccm-header-subtitle">${online}</div></div><div class="ccm-header-actions">${headerButton('video','영상통화')}${headerButton('phone','전화')}${headerButton('more','더보기')}</div>`;
+      body = `<button type="button" class="ccm-header-back ccm-whatsapp-back" aria-label="뒤로">${icon.back}</button><div class="ccm-whatsapp-profile">${avatarHtml('B','ccm-whatsapp-avatar')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div></div></div><div class="ccm-header-actions ccm-whatsapp-actions">${headerButton('more','더보기')}</div>`;
     } else {
-      body = `<button type="button" class="ccm-header-back" aria-label="뒤로">${icon.back}</button>${avatarHtml('B')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div><div class="ccm-header-subtitle">${online}</div></div><div class="ccm-header-actions">${headerButton('phone','전화')}${headerButton('more','더보기')}</div>`;
+      body = `<button type="button" class="ccm-header-back ccm-telegram-back" aria-label="뒤로">${icon.back}</button><div class="ccm-telegram-profile-pill">${avatarHtml('B','ccm-telegram-avatar')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div><div class="ccm-header-subtitle">${online}</div></div></div><div class="ccm-header-actions ccm-telegram-action-pill">${headerButton('phone','전화')}${headerButton('more','더보기')}</div>`;
     }
     h.innerHTML = body;
   }
