@@ -148,3 +148,12 @@ B: 한국과 일본 쪽 물량이 거의 말라서 필요하면 중국밖에 없
 - **새로 시작**은 기존 메시지만 모두 지우고 파서 입력창을 바로 열어 새 대화를 붙여넣을 수 있게 함
 
 모바일 캡처는 네이티브 메신저 계열 폰트 스택, 화자명-말풍선 간격, 말풍선 패딩/줄간격을 별도로 보정하며 전체 대화 PNG에도 같은 간격을 적용합니다.
+
+### 화면 충실도 기준 (2026-11)
+
+- **글자체**: 플랫폼별 네이티브 폰트 우선 스택 — KakaoTalk `Apple SD Gothic Neo / SamsungOneUI / Noto Sans KR`, WeChat `PingFang SC / Microsoft YaHei / Noto Sans SC`, WhatsApp·Telegram `SF Pro / Roboto / Noto Sans KR`. 웹폰트(Noto Sans KR·SC·JP)는 Android·Windows·Linux에서도 같은 결과가 나오도록 fallback으로 함께 불러옵니다.
+- **타이포**: 말풍선 15~15.5px, 줄간격 1.34~1.45, 시간 10px, 날짜 구분선 11.5px — 앱별 실제 크기 기준.
+- **말풍선**: 첫 말풍선에만 꼬리, 꼬리 쪽 모서리는 각지게. Kakao·WeChat은 위쪽, Telegram은 아래쪽 꼬리.
+- **메타 위치**: Kakao·WeChat은 말풍선 밖(카톡 `1 오후 3:25` 형태), WhatsApp·Telegram은 말풍선 안쪽 오른쪽 아래. WeChat은 말풍선마다 시간을 찍지 않고 5분 이상 끊길 때만 가운데 시간을 표시합니다.
+- **상단 바**: WhatsApp·Telegram은 라이트/다크 테마에 맞춰 헤더 색과 아이콘 색을 전환합니다.
+- **읽음 표시**: WhatsApp 파란 이중 체크, Telegram 초록 이중 체크(SVG) — 캡처 PNG에도 동일하게 그려집니다.

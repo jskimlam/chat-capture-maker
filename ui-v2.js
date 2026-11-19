@@ -71,7 +71,7 @@
     } else if (state.platform === 'wechat') {
       body = `<button type="button" class="ccm-header-back" aria-label="뒤로">${icon.back}</button><div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div></div><div class="ccm-header-actions">${headerButton('more','더보기')}</div>`;
     } else if (state.platform === 'whatsapp') {
-      body = `<button type="button" class="ccm-header-back ccm-whatsapp-back" aria-label="뒤로">${icon.back}</button><div class="ccm-whatsapp-profile">${avatarHtml('B','ccm-whatsapp-avatar')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div></div></div><div class="ccm-header-actions ccm-whatsapp-actions">${headerButton('moreVertical','더보기')}</div>`;
+      body = `<button type="button" class="ccm-header-back ccm-whatsapp-back" aria-label="뒤로">${icon.back}</button><div class="ccm-whatsapp-profile">${avatarHtml('B','ccm-whatsapp-avatar')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div><div class="ccm-header-subtitle">${online}</div></div></div><div class="ccm-header-actions ccm-whatsapp-actions">${headerButton('moreVertical','더보기')}</div>`;
     } else {
       body = `<button type="button" class="ccm-header-back ccm-telegram-back" aria-label="뒤로">${icon.back}</button><div class="ccm-telegram-profile-pill">${avatarHtml('B','ccm-telegram-avatar')}<div class="ccm-header-main"><div class="ccm-header-title">${escapeHtml(title)}</div><div class="ccm-header-subtitle">${online}</div></div></div><div class="ccm-header-actions ccm-telegram-action-pill">${headerButton('phone','전화')}${headerButton('moreVertical','더보기')}</div>`;
     }
@@ -106,6 +106,24 @@
     return s;
   }
 
+  function minutesOfDay(value){
+    const parts = String(value || '').split(':');
+    const h = Number(parts[0]);
+    const m = Number(parts[1]);
+    if (!Number.isFinite(h) || !Number.isFinite(m)) return null;
+    return h * 60 + m;
+  }
+
+  /* WeChat prints a centered timestamp only when the conversation pauses
+     (five minutes), not beside every bubble. */
+  function wechatNeedsTimeStamp(index){
+    const current = minutesOfDay(state.messages[index]?.time);
+    if (current === null) return false;
+    if (index === 0) return true;
+    const previous = minutesOfDay(state.messages[index - 1]?.time);
+    return previous === null || Math.abs(current - previous) >= 5;
+  }
+
   function renderPreviewV2(){
     const resolved = themeNow();
     els.captureTarget.className = `phone platform-${state.platform} theme-${resolved}`;
@@ -120,10 +138,22 @@
     buildComposer();
 
     const groupEnds = state.messages.map((m, i) => i === state.messages.length - 1 || state.messages[i + 1].speaker !== m.speaker || state.messages[i + 1].time !== m.time);
+    const centeredTime = state.platform === 'wechat';
 
     state.messages.forEach((msg, i) => {
       const mine = msg.speaker === 'A';
       const first = i === 0 || state.messages[i - 1].speaker !== msg.speaker;
+
+      if (centeredTime && wechatNeedsTimeStamp(i)) {
+        const separator = document.createElement('div');
+        separator.className = 'time-separator';
+        const stamp = document.createElement('span');
+        stamp.className = 'msg-time';
+        stamp.textContent = formatTime(msg.time, state.platform);
+        separator.append(stamp);
+        els.messageList.append(separator);
+      }
+
       const row = document.createElement('div');
       row.className = `message-row ${mine ? 'mine' : 'theirs'}`;
 
@@ -145,7 +175,7 @@
       const line = document.createElement('div');
       line.className = 'bubble-line';
       const bubble = document.createElement('div');
-      bubble.className = `bubble ${mine ? 'self' : 'other'}`;
+      bubble.className = `bubble ${mine ? 'self' : 'other'}${first ? ' group-start' : ''}`;
       const text = document.createElement('span');
       text.className = 'bubble-text';
       text.textContent = msg.text;
@@ -154,7 +184,7 @@
       const inBubbleMeta = state.platform === 'whatsapp' || state.platform === 'telegram';
       if (inBubbleMeta && groupEnds[i]) bubble.append(makeMeta(msg, mine));
       line.append(bubble);
-      if (!inBubbleMeta && groupEnds[i]) line.append(makeOutsideMeta(msg, mine));
+      if (!inBubbleMeta && !centeredTime && groupEnds[i]) line.append(makeOutsideMeta(msg, mine));
       stack.append(line);
 
       if (showAvatar && mine) row.append(stack, avatar);
