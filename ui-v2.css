@@ -1,7 +1,7 @@
 /* High-fidelity preview chrome and platform themes */
 .preview-theme-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 15px;padding:10px 12px;border:1px solid #2a384e;background:#0f1929;border-radius:13px}.preview-theme-row>span{font-size:11px;font-weight:800;color:#c9d4e4;white-space:nowrap}.preview-theme-options{display:flex;gap:6px}.preview-theme-btn{border:1px solid #314159;background:#151f31;color:#aab8cb;border-radius:10px;padding:7px 10px;font-size:10px;font-weight:800}.preview-theme-btn.active{background:#5876e7;border-color:#7895ff;color:#fff;box-shadow:0 6px 18px rgba(88,118,231,.22)}
 
-.phone{font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Segoe UI",sans-serif;width:min(430px,100%);height:820px;border:6px solid #111721;border-radius:34px;background:#fff;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 30px 90px rgba(0,0,0,.52);isolation:isolate}.phone *{box-sizing:border-box}.phone-statusbar{height:28px;min-height:28px;padding:0 16px;position:relative;z-index:8;display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:800}.chat-header{height:66px;min-height:66px;display:flex;align-items:center;gap:8px;padding:0 10px;position:relative;z-index:7;overflow:visible!important}.ccm-header-back,.ccm-icon-btn{appearance:none;border:0;background:transparent;color:inherit;display:grid;place-items:center;padding:0;flex:0 0 auto}.ccm-header-back{width:38px;height:42px}.ccm-icon-btn{width:34px;height:38px}.ccm-header-back svg,.ccm-icon-btn svg,.ccm-composer-icon svg{width:22px;height:22px;display:block;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ccm-header-avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;display:grid;place-items:center;flex:0 0 auto;background:#d7dce2}.ccm-header-avatar img{width:100%;height:100%;display:block;object-fit:cover}.ccm-header-main{min-width:0;flex:1;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden}.ccm-header-title{font-size:16px;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ccm-header-subtitle{font-size:10px;line-height:1.2;opacity:.68;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ccm-header-actions{display:flex;align-items:center;gap:1px;flex:0 0 auto}.ccm-default-avatar{position:relative;background:#d5d8dc!important;overflow:hidden}.ccm-default-avatar:before{content:"";position:absolute;width:37%;height:37%;left:31.5%;top:17%;border-radius:50%;background:#a8adb3}.ccm-default-avatar:after{content:"";position:absolute;width:70%;height:48%;left:15%;bottom:-10%;border-radius:50% 50% 20% 20%;background:#a8adb3}
+.phone{font-family:var(--ccm-font,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Segoe UI",sans-serif);width:min(430px,100%);height:820px;border:6px solid #111721;border-radius:34px;background:#fff;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 30px 90px rgba(0,0,0,.52);isolation:isolate}.phone *{box-sizing:border-box}.phone-statusbar{height:28px;min-height:28px;padding:0 16px;position:relative;z-index:8;display:flex;align-items:center;justify-content:space-between;font-size:10px;font-weight:800}.chat-header{height:66px;min-height:66px;display:flex;align-items:center;gap:8px;padding:0 10px;position:relative;z-index:7;overflow:visible!important}.ccm-header-back,.ccm-icon-btn{appearance:none;border:0;background:transparent;color:inherit;display:grid;place-items:center;padding:0;flex:0 0 auto}.ccm-header-back{width:38px;height:42px}.ccm-icon-btn{width:34px;height:38px}.ccm-header-back svg,.ccm-icon-btn svg,.ccm-composer-icon svg{width:22px;height:22px;display:block;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.ccm-header-avatar{width:38px;height:38px;border-radius:50%;overflow:hidden;display:grid;place-items:center;flex:0 0 auto;background:#d7dce2}.ccm-header-avatar img{width:100%;height:100%;display:block;object-fit:cover}.ccm-header-main{min-width:0;flex:1;display:flex;flex-direction:column;justify-content:center;gap:1px;overflow:hidden}.ccm-header-title{font-size:16px;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ccm-header-subtitle{font-size:10px;line-height:1.2;opacity:.68;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ccm-header-actions{display:flex;align-items:center;gap:1px;flex:0 0 auto}.ccm-default-avatar{position:relative;background:#d5d8dc!important;overflow:hidden}.ccm-default-avatar:before{content:"";position:absolute;width:37%;height:37%;left:31.5%;top:17%;border-radius:50%;background:#a8adb3}.ccm-default-avatar:after{content:"";position:absolute;width:70%;height:48%;left:15%;bottom:-10%;border-radius:50% 50% 20% 20%;background:#a8adb3}
 
 .chat-scroll{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:16px 14px 24px;position:relative;scrollbar-width:none}.chat-scroll::-webkit-scrollbar{display:none}.date-separator{width:max-content;max-width:84%;margin:7px auto 20px;padding:5px 10px;border-radius:999px;font-size:9px;line-height:1.25;text-align:center}.message-list{display:flex;flex-direction:column}.message-row{display:flex;align-items:flex-start;gap:8px;margin:2px 0}.message-row.mine{justify-content:flex-end}.message-row.theirs{justify-content:flex-start}.message-stack{max-width:74%;min-width:0;display:flex;flex-direction:column}.sender-name{font-size:11px;font-weight:500;line-height:1.3;margin:0 0 8px 3px;opacity:.78;letter-spacing:-.01em}.bubble-line{display:flex;align-items:flex-end;gap:5px;min-width:0}.mine .bubble-line{flex-direction:row-reverse}.bubble{font-size:14.5px;line-height:1.48;padding:10px 13px 11px;border-radius:13px;white-space:pre-wrap;overflow-wrap:anywhere;word-break:keep-all;letter-spacing:-.015em;box-shadow:0 1px 1px rgba(0,0,0,.07);position:relative}.msg-avatar{width:40px;height:40px;flex:0 0 40px}.avatar-spacer{width:40px;height:1px;flex:0 0 40px}.outside-meta{min-width:42px;margin-bottom:1px}.msg-time{font-size:8.5px;line-height:1.2;white-space:nowrap}.bubble-meta{font-size:8.5px;margin:6px 0 -3px 9px}.composer-bar{height:58px;min-height:58px;display:flex;align-items:center;gap:7px;padding:7px 10px;position:relative;z-index:8}.ccm-composer-icon{width:34px;height:38px;flex:0 0 34px;display:grid;place-items:center;color:inherit;opacity:.82}.fake-input{height:40px;min-width:0;flex:1;border-radius:21px;padding:0 13px;display:flex;align-items:center;font-size:12px}.mockup-mark{right:10px;bottom:9px;font-size:7px;padding:3px 5px}
 
@@ -302,12 +302,14 @@
 
 /* Platform typography matching */
 .phone.platform-whatsapp,
-.phone.platform-whatsapp .bubble,
-.phone.platform-whatsapp .ccm-header-title,
-.phone.platform-whatsapp .fake-input,
-.phone.platform-whatsapp .msg-time,
-.phone.platform-whatsapp .date-separator{
-  font-family:system-ui,-apple-system,"Roboto","Noto Sans KR","Segoe UI",sans-serif!important;
+.phone.platform-telegram{
+  --ccm-font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Roboto","Noto Sans KR","Noto Sans JP","Noto Sans SC","Segoe UI",sans-serif;
+}
+.phone.platform-kakao{
+  --ccm-font:"Apple SD Gothic Neo","SamsungOneUI","Noto Sans KR","Noto Sans JP","Noto Sans SC",-apple-system,BlinkMacSystemFont,"Malgun Gothic","Segoe UI",sans-serif;
+}
+.phone.platform-wechat{
+  --ccm-font:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Noto Sans KR","Noto Sans JP",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 .phone.platform-whatsapp .bubble{
   font-weight:400!important;
@@ -318,15 +320,6 @@
   letter-spacing:-.015em!important;
 }
 
-.phone.platform-telegram,
-.phone.platform-telegram .bubble,
-.phone.platform-telegram .ccm-header-title,
-.phone.platform-telegram .ccm-header-subtitle,
-.phone.platform-telegram .fake-input,
-.phone.platform-telegram .msg-time,
-.phone.platform-telegram .date-separator{
-  font-family:system-ui,-apple-system,"Roboto","Noto Sans KR","Segoe UI",sans-serif!important;
-}
 .phone.platform-telegram .bubble{
   font-weight:400!important;
   letter-spacing:-.014em!important;
@@ -363,3 +356,215 @@
 .phone.platform-kakao .kakao-unread{
   line-height:1;
 }
+
+
+/* ==========================================================
+   Fidelity pass: native type scale, per-messenger bubble rhythm,
+   theme-aware headers and messenger-accurate meta placement.
+   ========================================================== */
+
+/* ---------- Native message type scale ---------- */
+.phone.platform-kakao .bubble{
+  font-size:15px;
+  line-height:1.4;
+  padding:9px 12px 10px;
+  border-radius:14px;
+  letter-spacing:-.01em;
+}
+.phone.platform-wechat .bubble{
+  font-size:15.5px;
+  line-height:1.45;
+  padding:9px 11px;
+  border-radius:5px;
+  letter-spacing:0;
+}
+.phone.platform-whatsapp .bubble{
+  font-size:15px;
+  line-height:1.34;
+  padding:8px 10px 7px;
+  border-radius:8px;
+  letter-spacing:0;
+}
+.phone.platform-telegram .bubble{
+  font-size:15.5px;
+  line-height:1.35;
+  padding:8px 11px 7px;
+  border-radius:13px;
+  letter-spacing:0;
+}
+.phone.platform-kakao .ccm-header-title{font-size:18px;font-weight:700}
+.phone.platform-wechat .ccm-header-title{font-size:17px;font-weight:600}
+
+/* ---------- KakaoTalk: date pill, sender label, unread count ---------- */
+.phone.platform-kakao .date-separator{
+  background:rgba(0,0,0,.16);
+  color:#fff;
+  font-size:11.5px;
+  font-weight:400;
+  letter-spacing:0;
+}
+.phone.theme-dark.platform-kakao .date-separator{
+  background:rgba(0,0,0,.34);
+  color:#f2f5f7;
+}
+.phone.platform-kakao .sender-name{
+  font-size:11.5px;
+  color:#2f3a41;
+  letter-spacing:-.01em;
+}
+.phone.theme-dark.platform-kakao .sender-name{color:#e6ebef}
+/* Kakao draws the unread count on the same line as the timestamp. */
+.phone.platform-kakao .message-row.mine .outside-meta{
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-end;
+  gap:3px;
+  min-width:0;
+}
+.phone.platform-kakao .kakao-unread{
+  order:0;
+  font-size:10px;
+  line-height:1;
+  color:#f3cb00;
+  font-weight:800;
+}
+.phone.platform-kakao .message-row.mine .outside-meta .msg-time{order:1}
+
+/* ---------- WeChat: centered timestamps instead of per-bubble meta ---------- */
+.phone .time-separator{
+  display:flex;
+  justify-content:center;
+  margin:9px 0 5px;
+}
+.phone .time-separator .msg-time{
+  font-size:11.5px;
+  line-height:1.2;
+  letter-spacing:0;
+  color:#a3a3a3;
+  opacity:1;
+  white-space:nowrap;
+}
+.phone.theme-dark .time-separator .msg-time{color:#7c7c7c}
+
+/* ---------- WhatsApp: themed header with presence line ---------- */
+.phone.platform-whatsapp .ccm-header-subtitle{
+  display:block;
+  font-size:12px;
+  line-height:1.2;
+  margin-top:1px;
+  font-weight:400;
+  opacity:1;
+}
+.phone.theme-light.platform-whatsapp .chat-header{background:#fff!important;color:#111b21!important}
+.phone.theme-light.platform-whatsapp .ccm-whatsapp-back,
+.phone.theme-light.platform-whatsapp .ccm-whatsapp-actions,
+.phone.theme-light.platform-whatsapp .ccm-whatsapp-actions .ccm-icon-btn{color:#111b21!important}
+.phone.theme-light.platform-whatsapp .ccm-header-title{color:#111b21!important}
+.phone.theme-light.platform-whatsapp .ccm-header-subtitle{color:#667781}
+.phone.theme-dark.platform-whatsapp .ccm-header-subtitle{color:rgba(233,237,239,.85)}
+.phone.theme-light.platform-whatsapp .ccm-whatsapp-avatar{background:#e9edef!important}
+.phone.theme-dark.platform-whatsapp .ccm-whatsapp-avatar{background:#2a3942!important}
+
+/* ---------- Telegram: plain native header in light theme ---------- */
+.phone.theme-light.platform-telegram .chat-header{
+  height:62px!important;
+  min-height:62px!important;
+  padding:0 8px!important;
+  gap:4px!important;
+  background:#fff!important;
+  color:#111!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.1)!important;
+}
+.phone.theme-light.platform-telegram .ccm-telegram-back{
+  width:42px!important;
+  height:46px!important;
+  flex:0 0 42px!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#3390ec!important;
+}
+.phone.theme-light.platform-telegram .ccm-telegram-back svg{
+  width:26px!important;
+  height:26px!important;
+  stroke-width:2.2!important;
+}
+.phone.theme-light.platform-telegram .ccm-telegram-profile-pill{
+  height:auto!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  padding:0 6px 0 2px!important;
+  gap:9px!important;
+}
+.phone.theme-light.platform-telegram .ccm-telegram-avatar{
+  width:38px!important;
+  height:38px!important;
+  flex-basis:38px!important;
+}
+.phone.theme-light.platform-telegram .ccm-header-title{
+  color:#111!important;
+  font-size:17px!important;
+  font-weight:600!important;
+}
+.phone.theme-light.platform-telegram .ccm-telegram-profile-pill .ccm-header-subtitle{
+  color:#3390ec!important;
+  font-size:12px!important;
+  font-weight:500!important;
+}
+.phone.theme-light.platform-telegram .ccm-telegram-action-pill{
+  width:auto!important;
+  flex:0 0 auto!important;
+  height:46px!important;
+  gap:2px!important;
+  padding:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.phone.theme-light.platform-telegram .ccm-telegram-action-pill .ccm-icon-btn{
+  width:34px!important;
+  height:44px!important;
+  color:#3f8fd6!important;
+}
+.phone.theme-light.platform-telegram .bubble.self{background:#effdde}
+.phone.theme-light.platform-telegram .bubble.self:after{border-bottom-color:#effdde}
+
+/* Keep the exported clone on the same type scale. */
+body .phone.capture-export .bubble{font-size:inherit}
+
+/* ---------- Bubble tails: first bubble of a sender group only ---------- */
+.phone .bubble:not(.group-start):before,
+.phone .bubble:not(.group-start):after{content:none!important}
+.phone.platform-kakao .bubble.self.group-start{border-top-right-radius:0}
+.phone.platform-kakao .bubble.other.group-start{border-top-left-radius:0}
+.phone.platform-wechat .bubble.self.group-start{border-top-right-radius:0}
+.phone.platform-wechat .bubble.other.group-start{border-top-left-radius:0}
+.phone.platform-whatsapp .bubble.self.group-start{border-top-right-radius:0}
+.phone.platform-whatsapp .bubble.other.group-start{border-top-left-radius:0}
+.phone.platform-telegram .bubble.self.group-start{border-bottom-right-radius:0}
+.phone.platform-telegram .bubble.other.group-start{border-bottom-left-radius:0}
+
+/* ---------- Read receipts: real double-check glyph instead of text ticks ---------- */
+.phone .read-receipt{
+  display:inline-flex;
+  align-items:center;
+  font-size:0;
+  letter-spacing:0;
+  padding:0 0 0 1px;
+}
+.phone .read-receipt svg{
+  display:block;
+  width:15px;
+  height:10px;
+  overflow:visible;
+}
+.phone.platform-whatsapp .read-receipt{color:#53bdeb}
+.phone.platform-whatsapp.theme-dark .read-receipt{color:#53bdeb}
+.phone.platform-telegram .read-receipt{color:#4fae4e}
+.phone.theme-dark.platform-telegram .read-receipt{color:#6ac16a}
+
+/* Meta must never shrink or overlap the timestamp. */
+.phone .outside-meta{flex:0 0 auto}
+.phone.platform-kakao .message-row.mine .message-stack{max-width:80%}
+.phone.platform-kakao .message-row.theirs .message-stack{max-width:76%}

@@ -10,13 +10,13 @@
   <title>Chat Capture Maker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="composer.css?v=5" />
-  <link rel="stylesheet" href="mobile.css?v=5" />
-  <link rel="stylesheet" href="theme.css?v=5" />
-  <link rel="stylesheet" href="ui-v2.css?v=9" />
-  <link rel="stylesheet" href="capture-v3.css?v=6" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=10" />
+  <link rel="stylesheet" href="composer.css?v=6" />
+  <link rel="stylesheet" href="mobile.css?v=6" />
+  <link rel="stylesheet" href="theme.css?v=6" />
+  <link rel="stylesheet" href="ui-v2.css?v=10" />
+  <link rel="stylesheet" href="capture-v3.css?v=7" />
 </head>
 <body>
   <header class="app-header">
@@ -161,7 +161,11 @@ B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 
         <div class="phone platform-kakao" id="captureTarget">
           <div class="phone-statusbar">
             <span id="statusTime">12:34</span>
-            <span class="status-icons"><i class="signal-bars"></i><i class="wifi-dot"></i><i class="battery"></i></span>
+            <span class="status-icons" aria-hidden="true">
+              <svg class="status-signal" viewBox="0 0 18 12" focusable="false"><rect x="0" y="7.4" width="3.1" height="4.6" rx="1"/><rect x="4.8" y="5.2" width="3.1" height="6.8" rx="1"/><rect x="9.6" y="2.8" width="3.1" height="9.2" rx="1"/><rect x="14.4" y="0.4" width="3.1" height="11.6" rx="1"/></svg>
+              <svg class="status-wifi" viewBox="0 0 16 12" focusable="false"><path d="M1.1 4.1a10.4 10.4 0 0 1 13.8 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M4.1 7.3a6.1 6.1 0 0 1 7.8 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="8" cy="10.2" r="1.35"/></svg>
+              <svg class="status-battery" viewBox="0 0 26 12" focusable="false"><rect x="0.7" y="0.8" width="21.6" height="10.4" rx="3.1" fill="none" stroke="currentColor" stroke-width="1.4" opacity=".45"/><rect x="2.6" y="2.7" width="15" height="6.6" rx="1.9"/><path d="M23.6 4.2v3.6a2 2 0 0 0 0-3.6z"/></svg>
+            </span>
           </div>
           <div class="chat-header" id="chatHeader">
             <span class="back-icon">‹</span>
@@ -246,10 +250,10 @@ B: 1,300 위까지 보는 분위기고 floating formula면 최소 +70 정도는 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="app.js?v=9"></script>
+  <script src="app.js?v=10"></script>
   <script src="composer.js"></script>
   <script src="mobile.js?v=2"></script>
-  <script src="ui-v2.js?v=6"></script>
-  <script src="capture-v3.js?v=7"></script>
+  <script src="ui-v2.js?v=7"></script>
+  <script src="capture-v3.js?v=8"></script>
 </body>
 </html>

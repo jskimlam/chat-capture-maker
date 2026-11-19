@@ -420,7 +420,8 @@ function makeMeta(msg, mine) {
   if (mine && els.readReceiptToggle.checked) {
     const receipt = document.createElement('span');
     receipt.className = 'read-receipt';
-    receipt.textContent = '✓✓';
+    receipt.setAttribute('aria-label', '읽음');
+    receipt.innerHTML = '<svg viewBox="0 0 17 11" aria-hidden="true"><path d="M0.9 6.2l3.1 3.1 6.4-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M6.6 6.2l3.1 3.1 6.4-7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     meta.append(receipt);
   }
   return meta;

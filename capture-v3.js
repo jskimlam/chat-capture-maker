@@ -109,13 +109,7 @@
       #captureTarget .message-row + .message-row{margin-top:2px!important}
       #captureTarget .message-row.mine + .message-row.theirs,
       #captureTarget .message-row.theirs + .message-row.mine{margin-top:13px!important}
-      #captureTarget .sender-name{margin-bottom:8px!important}
-      #captureTarget .bubble{padding:10px 13px 11px!important;line-height:1.48!important}
-      #captureTarget .bubble-text{display:block;transform:translateY(-1px)}
-      #captureTarget.platform-kakao .bubble{padding:10px 14px 11px!important}
-      #captureTarget.platform-wechat .bubble{padding:10px 13px 10px!important}
-      #captureTarget.platform-whatsapp .bubble,
-      #captureTarget.platform-telegram .bubble{padding:10px 13px 10px!important}
+      #captureTarget .sender-name{margin-bottom:5px!important}
       #captureTarget .outside-meta{margin-bottom:2px!important}
       #captureTarget .date-separator{transition:none}
 
@@ -126,7 +120,7 @@
         width:430px!important;
         min-width:430px!important;
         max-width:430px!important;
-        font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Segoe UI",sans-serif!important;
+        font-family:inherit!important;
       }
       .capture-export.capture-canonical .chat-header{
         height:66px!important;
@@ -181,25 +175,14 @@
       .capture-export .message-row.mine + .message-row.theirs,
       .capture-export .message-row.theirs + .message-row.mine{margin-top:13px!important}
       .capture-export .sender-name{
-        font-size:11px!important;
+        font-size:11.5px!important;
         font-weight:500!important;
         line-height:1.35!important;
-        margin:0 0 8px 3px!important;
+        margin:0 0 5px 3px!important;
         padding:0 0 2px!important;
         letter-spacing:-.01em!important;
       }
-      .capture-export .bubble-line{gap:5px!important;align-items:flex-end!important}
-      .capture-export .bubble{
-        font-size:14.5px!important;
-        padding:10px 13px 11px!important;
-        line-height:1.48!important;
-        letter-spacing:-.015em!important;
-      }
-      .capture-export .bubble-text{display:block;transform:translateY(-1px)}
-      .capture-export.platform-kakao .bubble{padding:10px 14px 11px!important}
-      .capture-export.platform-wechat .bubble{padding:10px 13px 10px!important}
-      .capture-export.platform-whatsapp .bubble,
-      .capture-export.platform-telegram .bubble{padding:10px 13px 10px!important}
+      .capture-export .bubble-line{gap:4px!important;align-items:flex-end!important}
       .capture-export .outside-meta{margin-bottom:2px!important}
       .capture-export.capture-canonical .composer-bar{
         height:58px!important;
@@ -264,6 +247,10 @@
     root.querySelectorAll('.bubble-meta').forEach(meta => {
       if (visible) meta.style.display = '';
       else meta.style.display = meta.querySelector('.read-receipt') ? '' : 'none';
+    });
+
+    root.querySelectorAll('.time-separator').forEach(sep => {
+      sep.style.display = visible ? '' : 'none';
     });
   }
 
