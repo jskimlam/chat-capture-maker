@@ -568,3 +568,30 @@ body .phone.capture-export .bubble{font-size:inherit}
 .phone .outside-meta{flex:0 0 auto}
 .phone.platform-kakao .message-row.mine .message-stack{max-width:80%}
 .phone.platform-kakao .message-row.theirs .message-stack{max-width:76%}
+
+/* Desktop edit pane only; touch screens and the compact/Fold layout keep their existing sizes. */
+@media (width > 1100px) and (hover: hover) and (pointer: fine) {
+  .conversation-settings .panel-title-row h2 { font-size: 27px; }
+  .conversation-settings .step-label,
+  .conversation-settings .new-chat-btn { font-size: 15px; }
+  .controls-panel .conversation-settings label { font-size: 18px; }
+  .conversation-settings .check-option { font-size: 16.5px !important; }
+  .conversation-settings .avatar-editor { font-size: 24px; }
+
+  .conversation-settings .platform-card b {
+    font-size: 18px;
+    overflow-wrap: anywhere;
+  }
+  .conversation-settings .platform-card small { font-size: 15px; }
+  .conversation-settings .platform-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .controls-panel .conversation-settings input:not([type="checkbox"]),
+  .controls-panel .conversation-settings select {
+    font-size: 18px;
+    min-width: 0;
+  }
+  .controls-panel .conversation-settings input[type="file"] { font-size: 15px; }
+  .controls-panel .conversation-settings .form-grid > label { min-width: 0; }
+}
