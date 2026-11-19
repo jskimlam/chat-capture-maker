@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="composer.css?v=5" />
   <link rel="stylesheet" href="mobile.css?v=5" />
   <link rel="stylesheet" href="theme.css?v=5" />
-  <link rel="stylesheet" href="ui-v2.css?v=9" />
+  <link rel="stylesheet" href="ui-v2.css?v=10" />
   <link rel="stylesheet" href="capture-v3.css?v=6" />
 </head>
 <body>
@@ -35,57 +35,59 @@
 
   <main class="workspace">
     <section class="panel controls-panel">
-      <div class="panel-title-row">
-        <div><p class="step-label">STEP 1</p><h2>대화 설정</h2></div>
-        <button class="btn ghost new-chat-btn" id="resetBtn" type="button" title="현재 대화를 모두 비우고 새로 시작">새로 시작</button>
-      </div>
+      <section class="conversation-settings" aria-labelledby="conversationSettingsTitle">
+        <div class="panel-title-row">
+          <div><p class="step-label">STEP 1</p><h2 id="conversationSettingsTitle">대화 설정</h2></div>
+          <button class="btn ghost new-chat-btn" id="resetBtn" type="button" title="현재 대화를 모두 비우고 새로 시작">새로 시작</button>
+        </div>
 
-      <label class="field-label">플랫폼</label>
-      <div class="platform-grid" id="platformPicker">
-        <button class="platform-card active" data-platform="kakao"><span class="platform-dot kakao-dot"></span><b>KakaoTalk</b><small>카카오톡</small></button>
-        <button class="platform-card" data-platform="wechat"><span class="platform-dot wechat-dot"></span><b>WeChat</b><small>위챗</small></button>
-        <button class="platform-card" data-platform="whatsapp"><span class="platform-dot whatsapp-dot"></span><b>WhatsApp</b><small>왓츠앱</small></button>
-        <button class="platform-card" data-platform="telegram"><span class="platform-dot telegram-dot"></span><b>Telegram</b><small>텔레그램</small></button>
-      </div>
+        <label class="field-label">플랫폼</label>
+        <div class="platform-grid" id="platformPicker">
+          <button class="platform-card active" data-platform="kakao"><span class="platform-dot kakao-dot"></span><b>KakaoTalk</b><small>카카오톡</small></button>
+          <button class="platform-card" data-platform="wechat"><span class="platform-dot wechat-dot"></span><b>WeChat</b><small>위챗</small></button>
+          <button class="platform-card" data-platform="whatsapp"><span class="platform-dot whatsapp-dot"></span><b>WhatsApp</b><small>왓츠앱</small></button>
+          <button class="platform-card" data-platform="telegram"><span class="platform-dot telegram-dot"></span><b>Telegram</b><small>텔레그램</small></button>
+        </div>
 
-      <div class="form-grid two-col">
-        <label>대화방 이름<input id="chatTitle" type="text" value="Tommy" maxlength="80" /></label>
-        <label>대화 날짜<input id="chatDate" type="date" /></label>
-        <label>시작 시간<input id="startTime" type="time" /></label>
-        <label>대화 톤
-          <select id="toneSelect">
-            <option value="natural-business">자연스러운 업무 채팅</option>
-            <option value="casual">캐주얼</option>
-            <option value="faithful">원문 충실</option>
-          </select>
+        <div class="form-grid two-col">
+          <label>대화방 이름<input id="chatTitle" type="text" value="Tommy" maxlength="80" /></label>
+          <label>대화 날짜<input id="chatDate" type="date" /></label>
+          <label>시작 시간<input id="startTime" type="time" /></label>
+          <label>대화 톤
+            <select id="toneSelect">
+              <option value="natural-business">자연스러운 업무 채팅</option>
+              <option value="casual">캐주얼</option>
+              <option value="faithful">원문 충실</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="option-row">
+          <label class="check-option"><input type="checkbox" id="readReceiptToggle" checked><span>읽음 상태</span></label>
+          <label class="check-option"><input type="checkbox" id="mockupToggle" checked><span>Mockup 표시</span></label>
+        </div>
+
+        <div class="participant-grid">
+          <div class="participant-card">
+            <div class="avatar-editor"><img id="avatarAImg" alt="A 프로필" /><span id="avatarAFallback">A</span></div>
+            <div class="participant-fields">
+              <label>나 (A)<input id="nameA" type="text" value="lamjskim" maxlength="80" /></label>
+              <label class="file-label">프로필 사진<input id="avatarA" type="file" accept="image/*" /></label>
+            </div>
+          </div>
+          <div class="participant-card">
+            <div class="avatar-editor"><img id="avatarBImg" alt="B 프로필" /><span id="avatarBFallback">T</span></div>
+            <div class="participant-fields">
+              <label>상대방 (B)<input id="nameB" type="text" value="Tommy" maxlength="80" /></label>
+              <label class="file-label">프로필 사진<input id="avatarB" type="file" accept="image/*" /></label>
+            </div>
+          </div>
+        </div>
+
+        <label>전문용어/상황 힌트 <span class="muted">(선택)</span>
+          <input id="contextHint" type="text" maxlength="500" placeholder="예: petrochemical trading, SM spot market" />
         </label>
-      </div>
-
-      <div class="option-row">
-        <label class="check-option"><input type="checkbox" id="readReceiptToggle" checked><span>읽음 상태</span></label>
-        <label class="check-option"><input type="checkbox" id="mockupToggle" checked><span>Mockup 표시</span></label>
-      </div>
-
-      <div class="participant-grid">
-        <div class="participant-card">
-          <div class="avatar-editor"><img id="avatarAImg" alt="A 프로필" /><span id="avatarAFallback">A</span></div>
-          <div class="participant-fields">
-            <label>나 (A)<input id="nameA" type="text" value="lamjskim" maxlength="80" /></label>
-            <label class="file-label">프로필 사진<input id="avatarA" type="file" accept="image/*" /></label>
-          </div>
-        </div>
-        <div class="participant-card">
-          <div class="avatar-editor"><img id="avatarBImg" alt="B 프로필" /><span id="avatarBFallback">T</span></div>
-          <div class="participant-fields">
-            <label>상대방 (B)<input id="nameB" type="text" value="Tommy" maxlength="80" /></label>
-            <label class="file-label">프로필 사진<input id="avatarB" type="file" accept="image/*" /></label>
-          </div>
-        </div>
-      </div>
-
-      <label>전문용어/상황 힌트 <span class="muted">(선택)</span>
-        <input id="contextHint" type="text" maxlength="500" placeholder="예: petrochemical trading, SM spot market" />
-      </label>
+      </section>
 
       <div class="divider"></div>
 
